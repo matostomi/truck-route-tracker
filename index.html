@@ -3,14 +3,14 @@ const SUPABASE_URL = "https://nqngncyvtvsptlyqizpg.supabase.co";
 const SUPABASE_KEY = "sb_publishable_tUa87rjEkzu1OTM3Fd_X4w_ayDg6RW9";
 
 const distances = {
-  "Galafi":"567 km remaining",
-  "Semera / Logiya":"453 km remaining",
-  "Mile":"366 km remaining",
-  "Bati":"218 km remaining",
-  "Kombolcha":"200 km remaining",
-  "Kemise":"150 km remaining",
-  "Shewa Robit":"60 km remaining",
-  "Debre Birhan":"0 km · arrived"
+  "Galafi": "567 km remaining",
+  "Semera / Logiya": "453 km remaining",
+  "Mile": "366 km remaining",
+  "Bati": "218 km remaining",
+  "Kombolcha": "200 km remaining",
+  "Kemise": "150 km remaining",
+  "Shewa Robit": "60 km remaining",
+  "Debre Birhan": "0 km · arrived"
 };
 
 const select = document.getElementById("location");
@@ -21,8 +21,13 @@ function showLocation(current) {
 
   document.querySelectorAll("g[data-name]").forEach(g => {
     const active = g.dataset.name === current;
+
     g.classList.toggle("active", active);
-    g.querySelector(".name").classList.toggle("label-active", active);
+
+    const name = g.querySelector(".name");
+    if (name) {
+      name.classList.toggle("label-active", active);
+    }
   });
 
   status.textContent =
@@ -32,7 +37,8 @@ function showLocation(current) {
 async function loadLocation() {
   try {
     const response = await fetch(
-      SUPABASE_URL + "/rest/v1/truck_status?id=eq.1&select=location",
+      SUPABASE_URL +
+      "/rest/v1/truck_status?id=eq.1&select=location",
       {
         headers: {
           "apikey": SUPABASE_KEY,
@@ -46,6 +52,7 @@ async function loadLocation() {
     if (data.length > 0) {
       showLocation(data[0].location);
     }
+
   } catch (error) {
     console.error("Could not load truck location:", error);
   }
@@ -53,7 +60,7 @@ async function loadLocation() {
 
 async function saveLocation(location) {
   try {
-    await fetch(
+    const response = await fetch(
       SUPABASE_URL + "/rest/v1/truck_status?id=eq.1",
       {
         method: "PATCH",
@@ -70,17 +77,23 @@ async function saveLocation(location) {
       }
     );
 
+    if (!response.ok) {
+      console.error("Supabase update failed:", await response.text());
+      return;
+    }
+
     showLocation(location);
+
   } catch (error) {
     console.error("Could not save truck location:", error);
   }
 }
 
-select.addEventListener("change", () => {
+select.addEventListener("change", function() {
   saveLocation(select.value);
 });
 
-// Load current shared location
+// Load shared truck location when page opens
 loadLocation();
 
 // Check for changes every 3 seconds
