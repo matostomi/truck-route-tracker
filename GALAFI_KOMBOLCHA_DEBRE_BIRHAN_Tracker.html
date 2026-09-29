@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>GALAFI → KOMBOLCHA → DEBRE BIRHAN | Truck Route Tracker</title>
+<style>
+body{margin:0;background:#fff;font-family:Arial,sans-serif;color:#303038}
+.wrap{width:900px;max-width:96%;margin:auto}
+.header{padding:18px 4px 8px}
+.header h1{margin:0;font-size:32px;line-height:1.15;font-weight:500;letter-spacing:.1px}
+.subtitle{margin:9px 0 18px;color:#777b86;font-size:18px}
+.metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:12px}
+.metric{height:42px;border-radius:24px;display:flex;align-items:center;justify-content:center;font-size:17px;font-weight:500;letter-spacing:.1px;border:1px solid #e4e7e8}
+.metric:nth-child(1){background:#effdfa;border-color:#c7f2ea;color:#187b6b}
+.metric:nth-child(2){background:#f0fbf4;border-color:#d2f0dc;color:#267a58}
+.metric:nth-child(3){background:#f3f6fd;border-color:#d8e0f3;color:#425f9a}
+.metric:nth-child(4){background:#fff8ec;border-color:#f2e2c6;color:#9a6a27}
+.controls{text-align:center;padding:10px 8px 4px}
+select{font-size:15px;padding:8px 12px;border:1px solid #bbb;border-radius:6px}
+#status{margin-top:8px;font-size:15px;font-weight:700}
+svg{width:100%;height:auto;display:block}
+.dot{transition:r .2s}
+.active .dot{animation:blink .8s infinite}
+.active .halo{animation:pulse 1s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.15}}
+@keyframes pulse{0%,100%{opacity:.15}50%{opacity:.65}}
+.label-active{font-weight:700!important}
+@media(max-width:700px){.header h1{font-size:25px}.subtitle{font-size:15px}.metrics{grid-template-columns:repeat(2,1fr);gap:8px}.metric{font-size:14px;height:38px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<div class="header">
+  <h1>Route Corridor: Galafi → Debre Birhan</h1>
+  <div class="subtitle">Ethio-Djibouti Highway to Central Highlands · Comprehensive Waypoint Progress</div>
+  <div class="metrics">
+    <div class="metric">▣ Total: 567 km</div>
+    <div class="metric">◷ ~11–13 Hours</div>
+    <div class="metric">↕ 300m → 2,840m</div>
+    <div class="metric">◉ 8 Key Stations</div>
+  </div>
+</div>
+<div class="controls">
+  <label for="location"><b>Current Truck Location:</b></label>
+  <select id="location">
+    <option value="Galafi">Galafi</option>
+    <option value="Semera / Logiya">Semera / Logiya</option>
+    <option value="Mile">Mile</option>
+    <option value="Bati">Bati</option>
+    <option value="Kombolcha">Kombolcha</option>
+    <option value="Kemise">Kemise</option>
+    <option value="Shewa Robit">Shewa Robit</option>
+    <option value="Debre Birhan">Debre Birhan</option>
+  </select>
+  <div id="status"></div>
+</div>
+
+<svg viewBox="0 0 700 700" xmlns="http://www.w3.org/2000/svg">
+<rect width="700" height="700" fill="#fff"/>
+<text x="360" y="30" text-anchor="middle" font-size="13" fill="#5F5E5A">total route: 567 km</text>
+<line x1="200" y1="60" x2="200" y2="648" stroke="#1D9E75" stroke-width="3"/>
+
+<g data-name="Galafi"><text x="170" y="61" text-anchor="end" font-size="14" font-weight="600" fill="#2C2C2A">567 km remaining</text><circle class="halo" cx="200" cy="60" r="14" fill="#F0997B" opacity="0"/><circle class="dot" cx="200" cy="60" r="8" fill="#F0997B" stroke="#993C1D"/><text class="name" x="230" y="53" font-size="14" font-weight="600" fill="#2C2C2A">Galafi</text><text x="230" y="70" font-size="12" fill="#5F5E5A">ላፊ · Djibouti border</text></g>
+
+<g data-name="Semera / Logiya"><text x="170" y="145" text-anchor="end" font-size="14" font-weight="600" fill="#2C2C2A">453 km remaining</text><circle class="halo" cx="200" cy="144" r="12" fill="#5DCAA5" opacity="0"/><circle class="dot" cx="200" cy="144" r="6" fill="#5DCAA5" stroke="#0F6E56"/><text class="name" x="230" y="137" font-size="14" font-weight="600" fill="#2C2C2A">Semera / Logiya</text><text x="230" y="154" font-size="12" fill="#5F5E5A">ሰመራ / ሎጊያ</text></g>
+
+<g data-name="Mile"><text x="170" y="229" text-anchor="end" font-size="14" font-weight="600" fill="#2C2C2A">366 km remaining</text><circle class="halo" cx="200" cy="228" r="12" fill="#5DCAA5" opacity="0"/><circle class="dot" cx="200" cy="228" r="6" fill="#5DCAA5" stroke="#0F6E56"/><text class="name" x="230" y="221" font-size="14" font-weight="600" fill="#2C2C2A">Mile</text><text x="230" y="238" font-size="12" fill="#5F5E5A">ሚሌ</text></g>
+
+<g data-name="Bati"><text x="170" y="313" text-anchor="end" font-size="14" font-weight="600" fill="#2C2C2A">218 km remaining</text><circle class="halo" cx="200" cy="312" r="12" fill="#5DCAA5" opacity="0"/><circle class="dot" cx="200" cy="312" r="6" fill="#5DCAA5" stroke="#0F6E56"/><text class="name" x="230" y="305" font-size="14" font-weight="600" fill="#2C2C2A">Bati</text><text x="230" y="322" font-size="12" fill="#5F5E5A">ባቲ</text></g>
+
+<g data-name="Kombolcha"><text x="170" y="397" text-anchor="end" font-size="14" font-weight="600" fill="#2C2C2A">200 km remaining</text><circle class="halo" cx="200" cy="396" r="12" fill="#5DCAA5" opacity="0"/><circle class="dot" cx="200" cy="396" r="6" fill="#5DCAA5" stroke="#0F6E56"/><text class="name" x="230" y="389" font-size="14" font-weight="600" fill="#2C2C2A">Kombolcha</text><text x="230" y="406" font-size="12" fill="#5F5E5A">ኮምቦልቻ</text></g>
+
+<g data-name="Kemise"><text x="170" y="481" text-anchor="end" font-size="14" font-weight="600" fill="#2C2C2A">150 km remaining</text><circle class="halo" cx="200" cy="480" r="12" fill="#5DCAA5" opacity="0"/><circle class="dot" cx="200" cy="480" r="6" fill="#5DCAA5" stroke="#0F6E56"/><text class="name" x="230" y="473" font-size="14" font-weight="600" fill="#2C2C2A">Kemise</text><text x="230" y="490" font-size="12" fill="#5F5E5A">ከሚሴ</text></g>
+
+<g data-name="Shewa Robit"><text x="170" y="565" text-anchor="end" font-size="14" font-weight="600" fill="#2C2C2A">60 km remaining</text><circle class="halo" cx="200" cy="564" r="12" fill="#5DCAA5" opacity="0"/><circle class="dot" cx="200" cy="564" r="6" fill="#5DCAA5" stroke="#0F6E56"/><text class="name" x="230" y="557" font-size="14" font-weight="600" fill="#2C2C2A">Shewa Robit</text><text x="230" y="574" font-size="12" fill="#5F5E5A">ሸዋ ሮቢት</text></g>
+
+<g data-name="Debre Birhan"><text x="170" y="649" text-anchor="end" font-size="14" font-weight="600" fill="#2C2C2A">0 km · arrived</text><circle class="halo" cx="200" cy="648" r="14" fill="#F0997B" opacity="0"/><circle class="dot" cx="200" cy="648" r="8" fill="#F0997B" stroke="#993C1D"/><text class="name" x="230" y="641" font-size="14" font-weight="600" fill="#2C2C2A">Debre Birhan</text><text x="230" y="658" font-size="12" fill="#5F5E5A">ደብረ ብርሃን · destination</text></g>
+</svg>
+</div>
+
+<script>
+const distances={
+"Galafi":"567 km remaining","Semera / Logiya":"453 km remaining","Mile":"366 km remaining",
+"Bati":"218 km remaining","Kombolcha":"200 km remaining","Kemise":"150 km remaining",
+"Shewa Robit":"60 km remaining","Debre Birhan":"0 km · arrived"
+};
+const select=document.getElementById("location"), status=document.getElementById("status");
+function update(){
+ const current=select.value;
+ document.querySelectorAll("g[data-name]").forEach(g=>{
+   const active=g.dataset.name===current;
+   g.classList.toggle("active",active);
+   g.querySelector(".name").classList.toggle("label-active",active);
+ });
+ status.textContent="🚚 Arrived at "+current+" · "+distances[current];
+}
+select.addEventListener("change",update);
+update();
+</script>
+</body>
+</html>
