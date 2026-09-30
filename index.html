@@ -9,380 +9,302 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <style>
-*{
-    box-sizing:border-box;
+* {
+    box-sizing: border-box;
 }
 
-body{
-    margin:0;
-    font-family:Arial,Helvetica,sans-serif;
-    background:#f4f7fb;
-    color:#172033;
+body {
+    margin: 0;
+    font-family: Arial, Helvetica, sans-serif;
+    background: #f4f7fb;
+    color: #172033;
 }
 
-.container{
-    max-width:1250px;
-    margin:auto;
-    padding:20px;
+.container {
+    max-width: 1250px;
+    margin: auto;
+    padding: 20px;
 }
 
 /* HEADER */
-.header{
-    background:#111827;
-    color:white;
-    padding:24px;
-    border-radius:18px;
-    margin-bottom:18px;
+.header {
+    background: #111827;
+    color: white;
+    padding: 24px;
+    border-radius: 18px;
+    margin-bottom: 18px;
 }
 
-.header h1{
-    margin:0 0 8px;
-    font-size:28px;
+.header h1 {
+    margin: 0 0 8px;
+    font-size: 28px;
 }
 
-.header p{
-    margin:0;
-    color:#cbd5e1;
-}
-
-/* ADMIN BAR */
-.admin-bar{
-    background:white;
-    border-radius:14px;
-    padding:15px 18px;
-    margin-bottom:18px;
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    gap:15px;
-    box-shadow:0 3px 15px rgba(0,0,0,.06);
-}
-
-.admin-status{
-    font-weight:bold;
-}
-
-button{
-    border:0;
-    border-radius:9px;
-    padding:11px 18px;
-    cursor:pointer;
-    font-weight:bold;
-}
-
-.login-btn{
-    background:#111827;
-    color:white;
-}
-
-.logout-btn{
-    background:#dc2626;
-    color:white;
-    display:none;
-}
-
-.save-btn{
-    background:#2563eb;
-    color:white;
-    width:100%;
-    margin-top:12px;
-}
-
-button:disabled{
-    opacity:.5;
-    cursor:not-allowed;
-}
-
-/* LOGIN */
-.login-panel{
-    display:none;
-    background:white;
-    padding:20px;
-    border-radius:14px;
-    margin-bottom:18px;
-    box-shadow:0 3px 15px rgba(0,0,0,.06);
-}
-
-.login-panel h3{
-    margin-top:0;
-}
-
-.login-panel input{
-    width:100%;
-    padding:12px;
-    margin:7px 0;
-    border:1px solid #d1d5db;
-    border-radius:8px;
-}
-
-/* VIEW ONLY */
-.viewer-note{
-    background:#eff6ff;
-    border:1px solid #bfdbfe;
-    color:#1e40af;
-    padding:12px 15px;
-    border-radius:10px;
-    margin-bottom:18px;
+.header p {
+    margin: 0;
+    color: #cbd5e1;
 }
 
 /* METRICS */
-.metrics{
-    display:grid;
-    grid-template-columns:repeat(4,1fr);
-    gap:14px;
-    margin-bottom:18px;
+.metrics {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 14px;
+    margin-bottom: 18px;
 }
 
-.metric{
-    background:white;
-    border-radius:14px;
-    padding:18px;
-    box-shadow:0 3px 15px rgba(0,0,0,.06);
+.metric {
+    background: white;
+    border-radius: 14px;
+    padding: 18px;
+    box-shadow: 0 3px 15px rgba(0,0,0,.06);
 }
 
-.metric .value{
-    font-size:24px;
-    font-weight:bold;
-    margin-bottom:5px;
+.metric .value {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 5px;
 }
 
-.metric .label{
-    color:#64748b;
-    font-size:13px;
+.metric .label {
+    color: #64748b;
+    font-size: 13px;
 }
 
-/* GRID */
-.main-grid{
-    display:grid;
-    grid-template-columns:360px 1fr;
-    gap:18px;
+/* MAIN GRID */
+.main-grid {
+    display: grid;
+    grid-template-columns: 360px 1fr;
+    gap: 18px;
 }
 
 /* CARD */
-.card{
-    background:white;
-    border-radius:16px;
-    padding:20px;
-    box-shadow:0 3px 15px rgba(0,0,0,.06);
+.card {
+    background: white;
+    border-radius: 16px;
+    padding: 20px;
+    box-shadow: 0 3px 15px rgba(0,0,0,.06);
 }
 
-.card h2{
-    margin-top:0;
-    font-size:19px;
+.card h2 {
+    margin-top: 0;
+    font-size: 19px;
 }
 
 /* FORM */
-label{
-    display:block;
-    font-weight:bold;
-    font-size:13px;
-    margin-top:15px;
-    margin-bottom:6px;
+label {
+    display: block;
+    font-weight: bold;
+    font-size: 13px;
+    margin-top: 15px;
+    margin-bottom: 6px;
 }
 
 select,
 input,
-textarea{
-    width:100%;
-    padding:12px;
-    border:1px solid #d1d5db;
-    border-radius:9px;
-    font-size:14px;
-    background:white;
+textarea {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #d1d5db;
+    border-radius: 9px;
+    font-size: 14px;
+    background: white;
 }
 
-textarea{
-    min-height:125px;
-    resize:vertical;
-    font-family:Arial,Helvetica,sans-serif;
+textarea {
+    min-height: 125px;
+    resize: vertical;
+    font-family: Arial, Helvetica, sans-serif;
 }
 
-select:disabled,
-input:disabled,
-textarea:disabled{
-    background:#f1f5f9;
-    color:#64748b;
+/* SAVE BUTTON */
+.save-btn {
+    background: #2563eb;
+    color: white;
+    border: 0;
+    border-radius: 9px;
+    padding: 13px;
+    width: 100%;
+    margin-top: 16px;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 14px;
 }
 
-/* CURRENT STATUS */
-.current-status{
-    margin-top:18px;
-    background:#f8fafc;
-    border-radius:12px;
-    padding:15px;
+.save-btn:hover {
+    background: #1d4ed8;
 }
 
-.status-title{
-    font-size:12px;
-    color:#64748b;
-    margin-bottom:5px;
-    font-weight:bold;
+/* STATUS */
+.current-status {
+    margin-top: 18px;
+    background: #f8fafc;
+    border-radius: 12px;
+    padding: 15px;
 }
 
-.status-location{
-    font-size:20px;
-    font-weight:bold;
+.status-title {
+    font-size: 12px;
+    color: #64748b;
+    margin-bottom: 5px;
+    font-weight: bold;
 }
 
-.distance{
-    color:#2563eb;
-    margin-top:5px;
-    font-weight:bold;
+.status-location {
+    font-size: 20px;
+    font-weight: bold;
+}
+
+.distance {
+    color: #2563eb;
+    margin-top: 5px;
+    font-weight: bold;
 }
 
 /* REMARK */
-.remark-box{
-    margin-top:15px;
-    padding:15px;
-    border-radius:12px;
-    background:#fff7ed;
-    border:1px solid #fed7aa;
+.remark-box {
+    margin-top: 15px;
+    padding: 15px;
+    border-radius: 12px;
+    background: #fff7ed;
+    border: 1px solid #fed7aa;
 }
 
-.remark-title{
-    font-size:12px;
-    font-weight:bold;
-    color:#9a3412;
-    margin-bottom:7px;
+.remark-title {
+    font-size: 12px;
+    font-weight: bold;
+    color: #9a3412;
+    margin-bottom: 7px;
 }
 
-.remark-text{
-    font-size:14px;
-    line-height:1.5;
-    color:#431407;
-    white-space:pre-wrap;
+.remark-text {
+    font-size: 14px;
+    line-height: 1.5;
+    color: #431407;
+    white-space: pre-wrap;
+}
+
+/* MESSAGE */
+.message {
+    margin-top: 10px;
+    padding: 10px;
+    border-radius: 8px;
+    display: none;
+    font-size: 13px;
+}
+
+.message.success {
+    display: block;
+    background: #dcfce7;
+    color: #166534;
+}
+
+.message.error {
+    display: block;
+    background: #fee2e2;
+    color: #991b1b;
 }
 
 /* MAP */
-.map-card{
-    min-height:600px;
+.map-card {
+    min-height: 600px;
 }
 
-.map-title{
-    margin-bottom:10px;
+.map-wrapper {
+    overflow-x: auto;
 }
 
-.map-wrapper{
-    overflow-x:auto;
-}
-
-svg{
-    width:100%;
-    min-width:700px;
-    height:500px;
+svg {
+    width: 100%;
+    min-width: 700px;
+    height: 500px;
 }
 
 /* ROUTE */
-.route-line{
-    fill:none;
-    stroke:#cbd5e1;
-    stroke-width:8;
-    stroke-linecap:round;
+.route-line {
+    fill: none;
+    stroke: #cbd5e1;
+    stroke-width: 8;
+    stroke-linecap: round;
 }
 
-.route-line-inner{
-    fill:none;
-    stroke:#2563eb;
-    stroke-width:4;
-    stroke-linecap:round;
+.route-line-inner {
+    fill: none;
+    stroke: #2563eb;
+    stroke-width: 4;
+    stroke-linecap: round;
 }
 
-.station circle{
-    fill:white;
-    stroke:#2563eb;
-    stroke-width:4;
+.station circle {
+    fill: white;
+    stroke: #2563eb;
+    stroke-width: 4;
 }
 
-.station .name{
-    font-size:15px;
-    font-weight:bold;
-    fill:#334155;
+.station .name {
+    font-size: 15px;
+    font-weight: bold;
+    fill: #334155;
 }
 
-.station.active circle{
-    fill:#2563eb;
-    stroke:#93c5fd;
+.station.active circle {
+    fill: #2563eb;
+    stroke: #93c5fd;
 }
 
-.station.active .name{
-    fill:#1d4ed8;
-    font-size:17px;
+.station.active .name {
+    fill: #1d4ed8;
+    font-size: 17px;
 }
 
-.pulse{
-    display:none;
+.pulse {
+    display: none;
 }
 
-.station.active .pulse{
-    display:block;
-    fill:none;
-    stroke:#2563eb;
-    stroke-width:4;
-    animation:pulse 1.4s infinite;
+.station.active .pulse {
+    display: block;
+    fill: none;
+    stroke: #2563eb;
+    stroke-width: 4;
+    animation: pulse 1.4s infinite;
 }
 
-@keyframes pulse{
-    0%{
-        r:12;
-        opacity:1;
+@keyframes pulse {
+    0% {
+        r: 12;
+        opacity: 1;
     }
 
-    100%{
-        r:30;
-        opacity:0;
+    100% {
+        r: 30;
+        opacity: 0;
     }
-}
-
-/* SAVED MESSAGE */
-.message{
-    margin-top:10px;
-    padding:10px;
-    border-radius:8px;
-    display:none;
-    font-size:13px;
-}
-
-.message.success{
-    display:block;
-    background:#dcfce7;
-    color:#166534;
-}
-
-.message.error{
-    display:block;
-    background:#fee2e2;
-    color:#991b1b;
 }
 
 /* MOBILE */
-@media(max-width:900px){
+@media(max-width: 900px) {
 
-    .metrics{
-        grid-template-columns:repeat(2,1fr);
+    .metrics {
+        grid-template-columns: repeat(2, 1fr);
     }
 
-    .main-grid{
-        grid-template-columns:1fr;
+    .main-grid {
+        grid-template-columns: 1fr;
     }
 }
 
-@media(max-width:600px){
+@media(max-width: 600px) {
 
-    .container{
-        padding:10px;
+    .container {
+        padding: 10px;
     }
 
-    .header h1{
-        font-size:22px;
+    .header h1 {
+        font-size: 22px;
     }
 
-    .metrics{
-        grid-template-columns:1fr 1fr;
-    }
-
-    .admin-bar{
-        flex-direction:column;
-        align-items:stretch;
+    .metrics {
+        grid-template-columns: 1fr 1fr;
     }
 }
 </style>
@@ -394,71 +316,15 @@ svg{
 
     <!-- HEADER -->
     <div class="header">
-        <h1>GALAFI → KOMBOLCHA → DEBRE BIRHAN</h1>
-        <p>Synergy Plus Logistics · Ethio-Djibouti Truck Status Tracker</p>
-    </div>
 
+        <h1>
+            GALAFI → KOMBOLCHA → DEBRE BIRHAN
+        </h1>
 
-    <!-- ADMIN BAR -->
-    <div class="admin-bar">
+        <p>
+            Synergy Plus Logistics · Ethio-Djibouti Truck Status
+        </p>
 
-        <div class="admin-status" id="adminStatus">
-            👁 View Only
-        </div>
-
-        <div>
-            <button
-                class="login-btn"
-                id="loginButton"
-                onclick="openLogin()">
-                ADMIN LOGIN
-            </button>
-
-            <button
-                class="logout-btn"
-                id="logoutButton"
-                onclick="adminLogout()">
-                LOGOUT
-            </button>
-        </div>
-
-    </div>
-
-
-    <!-- LOGIN PANEL -->
-    <div class="login-panel" id="loginPanel">
-
-        <h3>Admin Login</h3>
-
-        <input
-            type="email"
-            id="email"
-            placeholder="Admin email">
-
-        <input
-            type="password"
-            id="password"
-            placeholder="Password">
-
-        <button
-            class="login-btn"
-            onclick="adminLogin()">
-            LOGIN
-        </button>
-
-        <div
-            class="message"
-            id="loginMessage">
-        </div>
-
-    </div>
-
-
-    <!-- VIEWER MESSAGE -->
-    <div class="viewer-note" id="viewerNote">
-        👁 <strong>View only.</strong>
-        Admin login is required to change the truck location,
-        customer, container number, or remark.
     </div>
 
 
@@ -470,9 +336,9 @@ svg{
             <div class="label">Total Route</div>
         </div>
 
-              <div class="metric">
-            <div class="value">300m → 2,840m</div>
-            <div class="label">Elevation Range</div>
+        <div class="metric">
+            <div class="value">2 → 3 Day </div>
+            <div class="label">Estimate arrive </div>
         </div>
 
         <div class="metric">
@@ -487,10 +353,12 @@ svg{
     <div class="main-grid">
 
 
-        <!-- LEFT CARD -->
+        <!-- LEFT INFORMATION CARD -->
         <div class="card">
 
-            <h2>Shipment Information</h2>
+            <h2>
+                Shipment Information
+            </h2>
 
 
             <!-- CUSTOMER -->
@@ -498,9 +366,7 @@ svg{
                 Customer
             </label>
 
-            <select
-                id="customer"
-                disabled>
+            <select id="customer">
 
                 <option value="EK">
                     EK
@@ -522,7 +388,7 @@ svg{
                 id="container"
                 type="text"
                 placeholder="Enter container number"
-                disabled>
+            >
 
 
             <!-- LOCATION -->
@@ -530,9 +396,7 @@ svg{
                 Current Truck Location
             </label>
 
-            <select
-                id="location"
-                disabled>
+            <select id="location">
 
                 <option value="Galafi">
                     Galafi
@@ -569,34 +433,34 @@ svg{
             </select>
 
 
-            <!-- REMARK INPUT -->
+            <!-- REMARK -->
             <label for="remark">
                 Remark / Delay Reason
             </label>
 
             <textarea
                 id="remark"
-                placeholder="Write what the driver reported... "
-                disabled></textarea>
+                placeholder="Write what the driver reported..."
+            ></textarea>
 
 
             <!-- SAVE -->
             <button
                 class="save-btn"
-                id="saveButton"
                 onclick="saveUpdate()"
-                disabled>
+            >
                 SAVE UPDATE
             </button>
 
 
+            <!-- SAVE MESSAGE -->
             <div
                 class="message"
-                id="saveMessage">
-            </div>
+                id="saveMessage"
+            ></div>
 
 
-            <!-- CURRENT STATUS -->
+            <!-- CURRENT LOCATION -->
             <div class="current-status">
 
                 <div class="status-title">
@@ -605,23 +469,23 @@ svg{
 
                 <div
                     class="status-location"
-                    id="status">
+                    id="status"
+                >
                     🚚 Arrived at Galafi
                 </div>
 
                 <div
                     class="distance"
-                    id="distance">
+                    id="distance"
+                >
                     567 km remaining
                 </div>
 
             </div>
 
 
-            <!-- CURRENT REMARK DISPLAY -->
-            <div
-                class="remark-box"
-                id="remarkDisplayBox">
+            <!-- REMARK DISPLAY -->
+            <div class="remark-box">
 
                 <div class="remark-title">
                     REMARK
@@ -629,7 +493,8 @@ svg{
 
                 <div
                     class="remark-text"
-                    id="remarkDisplay">
+                    id="remarkDisplay"
+                >
                     No remark available.
                 </div>
 
@@ -638,10 +503,10 @@ svg{
         </div>
 
 
-        <!-- MAP CARD -->
+        <!-- MAP -->
         <div class="card map-card">
 
-            <h2 class="map-title">
+            <h2>
                 Truck Route
             </h2>
 
@@ -649,9 +514,10 @@ svg{
 
                 <svg
                     viewBox="0 0 900 500"
-                    xmlns="http://www.w3.org/2000/svg">
+                    xmlns="http://www.w3.org/2000/svg"
+                >
 
-                    <!-- ROUTE -->
+                    <!-- ROUTE LINE -->
                     <path
                         class="route-line"
                         d="M90 420
@@ -659,7 +525,8 @@ svg{
                            C290 310 300 270 360 250
                            C420 230 450 200 500 180
                            C550 160 590 130 640 120
-                           C700 105 740 80 810 60"/>
+                           C700 105 740 80 810 60"
+                    />
 
                     <path
                         class="route-line-inner"
@@ -668,49 +535,54 @@ svg{
                            C290 310 300 270 360 250
                            C420 230 450 200 500 180
                            C550 160 590 130 640 120
-                           C700 105 740 80 810 60"/>
+                           C700 105 740 80 810 60"
+                    />
 
 
                     <!-- GALAFI -->
                     <g
                         class="station"
                         data-name="Galafi"
-                        transform="translate(90,420)">
+                        transform="translate(90,420)"
+                    >
 
                         <circle
                             class="pulse"
-                            r="12"/>
+                            r="12"
+                        />
 
-                        <circle
-                            r="9"/>
+                        <circle r="9" />
 
                         <text
                             class="name"
                             x="-25"
-                            y="35">
+                            y="35"
+                        >
                             Galafi
                         </text>
 
                     </g>
 
 
-                    <!-- SEMERA -->
+                    <!-- SEMERA / LOGIYA -->
                     <g
                         class="station"
                         data-name="Semera / Logiya"
-                        transform="translate(230,330)">
+                        transform="translate(230,330)"
+                    >
 
                         <circle
                             class="pulse"
-                            r="12"/>
+                            r="12"
+                        />
 
-                        <circle
-                            r="9"/>
+                        <circle r="9" />
 
                         <text
                             class="name"
                             x="-40"
-                            y="-20">
+                            y="-20"
+                        >
                             Semera / Logiya
                         </text>
 
@@ -721,19 +593,21 @@ svg{
                     <g
                         class="station"
                         data-name="Mile"
-                        transform="translate(360,250)">
+                        transform="translate(360,250)"
+                    >
 
                         <circle
                             class="pulse"
-                            r="12"/>
+                            r="12"
+                        />
 
-                        <circle
-                            r="9"/>
+                        <circle r="9" />
 
                         <text
                             class="name"
                             x="-15"
-                            y="-20">
+                            y="-20"
+                        >
                             Mile
                         </text>
 
@@ -744,43 +618,22 @@ svg{
                     <g
                         class="station"
                         data-name="Bati"
-                        transform="translate(500,180)">
+                        transform="translate(500,180)"
+                    >
 
                         <circle
                             class="pulse"
-                            r="12"/>
+                            r="12"
+                        />
 
-                        <circle
-                            r="9"/>
+                        <circle r="9" />
 
                         <text
                             class="name"
                             x="-15"
-                            y="-20">
+                            y="-20"
+                        >
                             Bati
-                        </text>
-
-                    </g>
-
-
-                    <!-- KOMBOLCHA -->
-                    <g
-                        class="station"
-                        data-name="Kombolcha"
-                        transform="translate(640,120)">
-
-                        <circle
-                            class="pulse"
-                            r="12"/>
-
-                        <circle
-                            r="9"/>
-
-                        <text
-                            class="name"
-                            x="-35"
-                            y="-20">
-                            Kombolcha
                         </text>
 
                     </g>
@@ -790,20 +643,47 @@ svg{
                     <g
                         class="station"
                         data-name="Kemise"
-                        transform="translate(550,160)">
+                        transform="translate(550,160)"
+                    >
 
                         <circle
                             class="pulse"
-                            r="12"/>
+                            r="12"
+                        />
 
-                        <circle
-                            r="9"/>
+                        <circle r="9" />
 
                         <text
                             class="name"
                             x="-20"
-                            y="35">
+                            y="35"
+                        >
                             Kemise
+                        </text>
+
+                    </g>
+
+
+                    <!-- KOMBOLCHA -->
+                    <g
+                        class="station"
+                        data-name="Kombolcha"
+                        transform="translate(640,120)"
+                    >
+
+                        <circle
+                            class="pulse"
+                            r="12"
+                        />
+
+                        <circle r="9" />
+
+                        <text
+                            class="name"
+                            x="-35"
+                            y="-20"
+                        >
+                            Kombolcha
                         </text>
 
                     </g>
@@ -813,19 +693,21 @@ svg{
                     <g
                         class="station"
                         data-name="Shewa Robit"
-                        transform="translate(700,105)">
+                        transform="translate(700,105)"
+                    >
 
                         <circle
                             class="pulse"
-                            r="12"/>
+                            r="12"
+                        />
 
-                        <circle
-                            r="9"/>
+                        <circle r="9" />
 
                         <text
                             class="name"
                             x="-35"
-                            y="-20">
+                            y="-20"
+                        >
                             Shewa Robit
                         </text>
 
@@ -836,19 +718,21 @@ svg{
                     <g
                         class="station"
                         data-name="Debre Birhan"
-                        transform="translate(810,60)">
+                        transform="translate(810,60)"
+                    >
 
                         <circle
                             class="pulse"
-                            r="12"/>
+                            r="12"
+                        />
 
-                        <circle
-                            r="9"/>
+                        <circle r="9" />
 
                         <text
                             class="name"
                             x="-45"
-                            y="-20">
+                            y="-20"
+                        >
                             Debre Birhan
                         </text>
 
@@ -868,7 +752,7 @@ svg{
 <script>
 
 /* =========================================================
-   SUPABASE
+   SUPABASE CONNECTION
 ========================================================= */
 
 const SUPABASE_URL =
@@ -885,7 +769,7 @@ const supabaseClient =
 
 
 /* =========================================================
-   ROUTE DISTANCES
+   DISTANCES
 ========================================================= */
 
 const distances = {
@@ -933,9 +817,6 @@ const containerInput =
 const remarkInput =
     document.getElementById("remark");
 
-const saveButton =
-    document.getElementById("saveButton");
-
 const statusElement =
     document.getElementById("status");
 
@@ -945,40 +826,15 @@ const distanceElement =
 const remarkDisplay =
     document.getElementById("remarkDisplay");
 
-const adminStatus =
-    document.getElementById("adminStatus");
-
-const loginButton =
-    document.getElementById("loginButton");
-
-const logoutButton =
-    document.getElementById("logoutButton");
-
-const viewerNote =
-    document.getElementById("viewerNote");
-
-const loginPanel =
-    document.getElementById("loginPanel");
-
-const loginMessage =
-    document.getElementById("loginMessage");
-
 const saveMessage =
     document.getElementById("saveMessage");
-
-
-/* =========================================================
-   ADMIN STATE
-========================================================= */
-
-let isAdmin = false;
 
 
 /* =========================================================
    UPDATE MAP
 ========================================================= */
 
-function updateMap(location){
+function updateMap(location) {
 
     document
         .querySelectorAll(".station")
@@ -998,6 +854,7 @@ function updateMap(location){
     statusElement.textContent =
         "🚚 Arrived at " + location;
 
+
     distanceElement.textContent =
         distances[location] || "";
 
@@ -1005,161 +862,10 @@ function updateMap(location){
 
 
 /* =========================================================
-   ADMIN MODE
+   LOAD DATA FROM SUPABASE
 ========================================================= */
 
-function setAdminMode(admin){
-
-    isAdmin = admin;
-
-    locationSelect.disabled = !admin;
-    customerSelect.disabled = !admin;
-    containerInput.disabled = !admin;
-    remarkInput.disabled = !admin;
-    saveButton.disabled = !admin;
-
-
-    if(admin){
-
-        adminStatus.textContent =
-            "🔐 Admin Mode";
-
-        loginButton.style.display =
-            "none";
-
-        logoutButton.style.display =
-            "inline-block";
-
-        viewerNote.innerHTML =
-            "🔐 <strong>Admin mode.</strong> " +
-            "You can update the truck location, shipment information, and driver remark.";
-
-    }else{
-
-        adminStatus.textContent =
-            "👁 View Only";
-
-        loginButton.style.display =
-            "inline-block";
-
-        logoutButton.style.display =
-            "none";
-
-        viewerNote.innerHTML =
-            "👁 <strong>View only.</strong> " +
-            "Admin login is required to change the truck location, customer, container number, or remark.";
-
-    }
-
-}
-
-
-/* =========================================================
-   OPEN LOGIN
-========================================================= */
-
-function openLogin(){
-
-    loginPanel.style.display =
-        loginPanel.style.display === "block"
-        ? "none"
-        : "block";
-
-}
-
-
-/* =========================================================
-   ADMIN LOGIN
-========================================================= */
-
-async function adminLogin(){
-
-    const email =
-        document.getElementById("email").value.trim();
-
-    const password =
-        document.getElementById("password").value;
-
-
-    loginMessage.className =
-        "message";
-
-    loginMessage.textContent = "";
-
-
-    if(!email || !password){
-
-        loginMessage.className =
-            "message error";
-
-        loginMessage.textContent =
-            "Please enter your email and password.";
-
-        return;
-    }
-
-
-    const { data, error } =
-        await supabaseClient.auth.signInWithPassword({
-
-            email: email,
-            password: password
-
-        });
-
-
-    if(error){
-
-        loginMessage.className =
-            "message error";
-
-        loginMessage.textContent =
-            error.message;
-
-        return;
-    }
-
-
-    if(data.session){
-
-        loginMessage.className =
-            "message success";
-
-        loginMessage.textContent =
-            "Login successful.";
-
-        setAdminMode(true);
-
-        setTimeout(() => {
-
-            loginPanel.style.display =
-                "none";
-
-        }, 700);
-
-    }
-
-}
-
-
-/* =========================================================
-   LOGOUT
-========================================================= */
-
-async function adminLogout(){
-
-    await supabaseClient.auth.signOut();
-
-    setAdminMode(false);
-
-}
-
-
-/* =========================================================
-   LOAD DATA
-========================================================= */
-
-async function loadData(){
+async function loadData() {
 
     const {
         data,
@@ -1177,7 +883,7 @@ async function loadData(){
         .single();
 
 
-    if(error){
+    if (error) {
 
         console.error(
             "Load error:",
@@ -1188,15 +894,14 @@ async function loadData(){
     }
 
 
-    if(!data){
-
+    if (!data) {
         return;
     }
 
 
     /* LOCATION */
 
-    if(data.location){
+    if (data.location) {
 
         locationSelect.value =
             data.location;
@@ -1210,7 +915,7 @@ async function loadData(){
 
     /* CUSTOMER */
 
-    if(data.customer){
+    if (data.customer) {
 
         customerSelect.value =
             data.customer;
@@ -1220,7 +925,7 @@ async function loadData(){
 
     /* CONTAINER */
 
-    if(data.container_no !== null){
+    if (data.container_no !== null) {
 
         containerInput.value =
             data.container_no || "";
@@ -1230,7 +935,7 @@ async function loadData(){
 
     /* REMARK */
 
-    if(data.remark){
+    if (data.remark) {
 
         remarkInput.value =
             data.remark;
@@ -1238,10 +943,9 @@ async function loadData(){
         remarkDisplay.textContent =
             data.remark;
 
-    }else{
+    } else {
 
-        remarkInput.value =
-            "";
+        remarkInput.value = "";
 
         remarkDisplay.textContent =
             "No remark available.";
@@ -1252,22 +956,10 @@ async function loadData(){
 
 
 /* =========================================================
-   SAVE EVERYTHING
+   SAVE UPDATE
 ========================================================= */
 
-async function saveUpdate(){
-
-    if(!isAdmin){
-
-        return;
-    }
-
-
-    saveMessage.className =
-        "message";
-
-    saveMessage.textContent = "";
-
+async function saveUpdate() {
 
     const location =
         locationSelect.value;
@@ -1282,29 +974,14 @@ async function saveUpdate(){
         remarkInput.value.trim();
 
 
-    const {
-        data: sessionData
-    } = await supabaseClient
-        .auth
-        .getSession();
+    saveMessage.className =
+        "message";
 
-
-    if(!sessionData.session){
-
-        saveMessage.className =
-            "message error";
-
-        saveMessage.textContent =
-            "Admin login required.";
-
-        setAdminMode(false);
-
-        return;
-    }
+    saveMessage.textContent =
+        "";
 
 
     const {
-        data,
         error
     } = await supabaseClient
 
@@ -1329,12 +1006,10 @@ async function saveUpdate(){
 
         })
 
-        .eq("id", 1)
-
-        .select();
+        .eq("id", 1);
 
 
-    if(error){
+    if (error) {
 
         console.error(
             "Save error:",
@@ -1352,17 +1027,17 @@ async function saveUpdate(){
     }
 
 
-    /* UPDATE DISPLAY */
+    /* UPDATE SCREEN */
 
     updateMap(location);
 
 
-    if(remark){
+    if (remark) {
 
         remarkDisplay.textContent =
             remark;
 
-    }else{
+    } else {
 
         remarkDisplay.textContent =
             "No remark available.";
@@ -1374,7 +1049,7 @@ async function saveUpdate(){
         "message success";
 
     saveMessage.textContent =
-        "✓ Truck update saved successfully.";
+        "✓ Update saved successfully.";
 
 
     setTimeout(() => {
@@ -1396,7 +1071,7 @@ async function saveUpdate(){
 
 locationSelect.addEventListener(
     "change",
-    function(){
+    function() {
 
         updateMap(
             this.value
@@ -1407,69 +1082,14 @@ locationSelect.addEventListener(
 
 
 /* =========================================================
-   ENTER KEY LOGIN
-========================================================= */
-
-document
-    .getElementById("password")
-    .addEventListener(
-        "keydown",
-        function(event){
-
-            if(event.key === "Enter"){
-
-                adminLogin();
-
-            }
-
-        }
-    );
-
-
-/* =========================================================
-   AUTH STATE
-========================================================= */
-
-supabaseClient.auth.onAuthStateChange(
-    (event, session) => {
-
-        if(session){
-
-            setAdminMode(true);
-
-        }else{
-
-            setAdminMode(false);
-
-        }
-
-    }
-);
-
-
-/* =========================================================
    INITIAL LOAD
 ========================================================= */
 
-async function initialize(){
-
-    setAdminMode(false);
-
-    await loadData();
-
-}
+loadData();
 
 
 /* =========================================================
-   START
-========================================================= */
-
-initialize();
-
-
-/* =========================================================
-   AUTO REFRESH
-   Boss/customer will see new updates automatically.
+   AUTO REFRESH EVERY 5 SECONDS
 ========================================================= */
 
 setInterval(
