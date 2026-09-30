@@ -1,320 +1,386 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Truck Route Tracker | Synergy Plus Logistics</title>
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0">
+
+<title>
+Synergy Plus Logistics - Truck Status
+</title>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
+
 <style>
+
+/* =========================
+   BASIC
+========================= */
+
 * {
     box-sizing: border-box;
 }
 
 body {
     margin: 0;
+    background: #ffffff;
+    color: #303030;
     font-family: Arial, Helvetica, sans-serif;
-    background: #f4f7fb;
-    color: #172033;
 }
 
-.container {
-    max-width: 1250px;
+.page {
+    max-width: 1050px;
     margin: auto;
-    padding: 20px;
+    padding: 0 28px 40px;
 }
 
-/* HEADER */
+
+/* =========================
+   HEADER
+========================= */
+
 .header {
-    background: #111827;
-    color: white;
-    padding: 24px;
-    border-radius: 18px;
-    margin-bottom: 18px;
+    padding-top: 5px;
+    margin-bottom: 8px;
 }
 
 .header h1 {
-    margin: 0 0 8px;
-    font-size: 28px;
+    margin: 0;
+    font-size: 38px;
+    font-weight: 500;
+    color: #17324d;
+    letter-spacing: -1px;
 }
 
 .header p {
-    margin: 0;
-    color: #cbd5e1;
+    margin: 10px 0 0;
+    font-size: 20px;
+    color: #71808f;
 }
 
-/* METRICS */
-.metrics {
+
+/* =========================
+   TOP INFO
+========================= */
+
+.top-info {
+    display: flex;
+    gap: 16px;
+    margin: 6px 0 25px;
+}
+
+.info-box {
+    border-radius: 30px;
+    padding: 10px 28px;
+    min-width: 220px;
+    text-align: center;
+    font-size: 18px;
+    color: #267f68;
+    border: 1px solid #c7eee4;
+    background: #f5fffc;
+}
+
+.info-box.blue {
+    color: #405d9b;
+    border-color: #d3def8;
+    background: #f7f9ff;
+}
+
+.info-box strong {
+    font-weight: 500;
+}
+
+
+/* =========================
+   UPDATE AREA
+========================= */
+
+.update-area {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 14px;
-    margin-bottom: 18px;
+    grid-template-columns: 1fr 1fr;
+    gap: 35px;
+    align-items: start;
+    margin-bottom: 15px;
 }
 
-.metric {
-    background: white;
-    border-radius: 14px;
-    padding: 18px;
-    box-shadow: 0 3px 15px rgba(0,0,0,.06);
+.update-left {
+    min-height: 115px;
 }
 
-.metric .value {
-    font-size: 24px;
+.update-right {
+    padding-top: 3px;
+}
+
+.form-row {
+    margin-bottom: 12px;
+}
+
+.form-row label {
+    display: inline-block;
     font-weight: bold;
-    margin-bottom: 5px;
-}
-
-.metric .label {
-    color: #64748b;
-    font-size: 13px;
-}
-
-/* MAIN GRID */
-.main-grid {
-    display: grid;
-    grid-template-columns: 360px 1fr;
-    gap: 18px;
-}
-
-/* CARD */
-.card {
-    background: white;
-    border-radius: 16px;
-    padding: 20px;
-    box-shadow: 0 3px 15px rgba(0,0,0,.06);
-}
-
-.card h2 {
-    margin-top: 0;
-    font-size: 19px;
-}
-
-/* FORM */
-label {
-    display: block;
-    font-weight: bold;
-    font-size: 13px;
-    margin-top: 15px;
-    margin-bottom: 6px;
+    font-size: 16px;
+    margin-right: 8px;
 }
 
 select,
 input,
 textarea {
-    width: 100%;
-    padding: 12px;
-    border: 1px solid #d1d5db;
-    border-radius: 9px;
-    font-size: 14px;
+    border: 1px solid #c9cfd5;
+    border-radius: 7px;
     background: white;
-}
-
-textarea {
-    min-height: 125px;
-    resize: vertical;
+    color: #333;
     font-family: Arial, Helvetica, sans-serif;
 }
 
-/* SAVE BUTTON */
-.save-btn {
-    background: #2563eb;
-    color: white;
-    border: 0;
-    border-radius: 9px;
-    padding: 13px;
+select {
+    padding: 9px 38px 9px 12px;
+    font-size: 15px;
+}
+
+input {
+    padding: 9px 12px;
+    font-size: 15px;
+    width: 190px;
+}
+
+textarea {
     width: 100%;
-    margin-top: 16px;
-    cursor: pointer;
-    font-weight: bold;
+    min-height: 75px;
+    padding: 10px 12px;
     font-size: 14px;
+    resize: vertical;
 }
 
-.save-btn:hover {
-    background: #1d4ed8;
+textarea::placeholder,
+input::placeholder {
+    color: #8b9299;
 }
 
-/* STATUS */
+
+/* =========================
+   CURRENT STATUS
+========================= */
+
 .current-status {
-    margin-top: 18px;
-    background: #f8fafc;
-    border-radius: 12px;
-    padding: 15px;
+    margin-top: 14px;
 }
 
-.status-title {
-    font-size: 12px;
-    color: #64748b;
-    margin-bottom: 5px;
+.current-title {
+    font-size: 16px;
     font-weight: bold;
+    margin-bottom: 8px;
 }
 
-.status-location {
-    font-size: 20px;
+.status-line {
+    font-size: 18px;
     font-weight: bold;
+    color: #222;
 }
 
-.distance {
-    color: #2563eb;
-    margin-top: 5px;
+.distance-top {
+    font-size: 18px;
     font-weight: bold;
+    margin-top: 8px;
 }
 
-/* REMARK */
-.remark-box {
-    margin-top: 15px;
-    padding: 15px;
-    border-radius: 12px;
-    background: #fff7ed;
-    border: 1px solid #fed7aa;
-}
 
-.remark-title {
-    font-size: 12px;
+/* =========================
+   REMARK
+========================= */
+
+.remark-label {
     font-weight: bold;
-    color: #9a3412;
+    font-size: 16px;
     margin-bottom: 7px;
 }
 
-.remark-text {
+.save-button {
+    margin-top: 8px;
+    padding: 9px 24px;
+    border: none;
+    border-radius: 7px;
+    background: #15966d;
+    color: white;
     font-size: 14px;
-    line-height: 1.5;
-    color: #431407;
-    white-space: pre-wrap;
+    font-weight: bold;
+    cursor: pointer;
 }
 
-/* MESSAGE */
+.save-button:hover {
+    background: #107b5a;
+}
+
 .message {
-    margin-top: 10px;
-    padding: 10px;
-    border-radius: 8px;
     display: none;
-    font-size: 13px;
+    margin-top: 8px;
+    font-size: 14px;
 }
 
 .message.success {
     display: block;
-    background: #dcfce7;
-    color: #166534;
+    color: #15803d;
 }
 
 .message.error {
     display: block;
-    background: #fee2e2;
-    color: #991b1b;
+    color: #dc2626;
 }
 
-/* MAP */
-.map-card {
-    min-height: 600px;
+
+/* =========================
+   ROUTE
+========================= */
+
+.route-area {
+    position: relative;
+    margin-top: 5px;
+    padding-bottom: 20px;
 }
 
-.map-wrapper {
-    overflow-x: auto;
-}
-
-svg {
+.route-svg {
     width: 100%;
-    min-width: 700px;
-    height: 500px;
-}
-
-/* ROUTE */
-.route-line {
-    fill: none;
-    stroke: #cbd5e1;
-    stroke-width: 8;
-    stroke-linecap: round;
-}
-
-.route-line-inner {
-    fill: none;
-    stroke: #2563eb;
-    stroke-width: 4;
-    stroke-linecap: round;
-}
-
-.station circle {
-    fill: white;
-    stroke: #2563eb;
-    stroke-width: 4;
-}
-
-.station .name {
-    font-size: 15px;
-    font-weight: bold;
-    fill: #334155;
-}
-
-.station.active circle {
-    fill: #2563eb;
-    stroke: #93c5fd;
-}
-
-.station.active .name {
-    fill: #1d4ed8;
-    font-size: 17px;
-}
-
-.pulse {
-    display: none;
-}
-
-.station.active .pulse {
+    height: auto;
     display: block;
+}
+
+
+/* Route line */
+
+.route-line {
+    stroke: #22a879;
+    stroke-width: 5;
     fill: none;
-    stroke: #2563eb;
-    stroke-width: 4;
-    animation: pulse 1.4s infinite;
+    stroke-linecap: round;
+}
+
+
+/* Station */
+
+.station-circle {
+    fill: #61cda9;
+    stroke: #188b68;
+    stroke-width: 2;
+}
+
+.station-label {
+    font-size: 18px;
+    font-weight: bold;
+    fill: #303030;
+}
+
+.station-amharic {
+    font-size: 15px;
+    fill: #666;
+}
+
+.distance-label {
+    font-size: 17px;
+    font-weight: bold;
+    fill: #303030;
+}
+
+.destination-circle {
+    fill: #f29a70;
+    stroke: #c65e39;
+    stroke-width: 2;
+}
+
+
+/* =========================
+   ACTIVE LOCATION
+========================= */
+
+.active-circle {
+    fill: #f6a078;
+    stroke: #ef6f3f;
+    stroke-width: 3;
+}
+
+.active-pulse {
+    fill: none;
+    stroke: #f6a078;
+    stroke-width: 5;
+    opacity: 0.6;
+    animation: pulse 1.5s infinite;
 }
 
 @keyframes pulse {
+
     0% {
-        r: 12;
-        opacity: 1;
+        r: 13;
+        opacity: 0.8;
     }
 
     100% {
-        r: 30;
+        r: 27;
         opacity: 0;
     }
+
 }
 
-/* MOBILE */
-@media(max-width: 900px) {
 
-    .metrics {
-        grid-template-columns: repeat(2, 1fr);
-    }
+/* =========================
+   RESPONSIVE
+========================= */
 
-    .main-grid {
-        grid-template-columns: 1fr;
-    }
-}
+@media (max-width: 800px) {
 
-@media(max-width: 600px) {
-
-    .container {
-        padding: 10px;
+    .page {
+        padding: 0 15px 30px;
     }
 
     .header h1 {
-        font-size: 22px;
+        font-size: 27px;
     }
 
-    .metrics {
-        grid-template-columns: 1fr 1fr;
+    .header p {
+        font-size: 16px;
     }
+
+    .top-info {
+        flex-wrap: wrap;
+    }
+
+    .info-box {
+        min-width: 170px;
+        flex: 1;
+        font-size: 15px;
+    }
+
+    .update-area {
+        grid-template-columns: 1fr;
+        gap: 10px;
+    }
+
+    .route-svg {
+        min-width: 700px;
+    }
+
+    .route-area {
+        overflow-x: auto;
+    }
+
 }
+
 </style>
+
 </head>
+
 
 <body>
 
-<div class="container">
 
-    <!-- HEADER -->
+<div class="page">
+
+
+    <!-- =========================
+         HEADER
+    ========================== -->
+
     <div class="header">
 
         <h1>
@@ -328,115 +394,147 @@ svg {
     </div>
 
 
-    <!-- METRICS -->
-    <div class="metrics">
+    <!-- =========================
+         TOP INFORMATION
+    ========================== -->
 
-        <div class="metric">
-            <div class="value">567 km</div>
-            <div class="label">Total Route</div>
+    <div class="top-info">
+
+        <div class="info-box">
+
+            ▣ Total:
+            <strong>567 km</strong>
+
         </div>
 
-        <div class="metric">
-            <div class="value">2 → 3 Day </div>
-            <div class="label">Estimate arrive </div>
+
+        <div class="info-box">
+
+            ↕ 2 → 3 Days
+
         </div>
 
-        <div class="metric">
-            <div class="value">8</div>
-            <div class="label">Key Stations</div>
+
+        <div class="info-box blue">
+
+            ⦿ 8 Key Stations
+
         </div>
 
     </div>
 
 
-    <!-- MAIN -->
-    <div class="main-grid">
+    <!-- =========================
+         UPDATE SECTION
+    ========================== -->
+
+    <div class="update-area">
 
 
-        <!-- LEFT INFORMATION CARD -->
-        <div class="card">
+        <!-- LEFT SIDE -->
 
-            <h2>
-                Shipment Information
-            </h2>
+        <div class="update-left">
 
 
-            <!-- CUSTOMER -->
-            <label for="customer">
-                Customer
-            </label>
+            <div class="form-row">
 
-            <select id="customer">
+                <label>
+                    Customer:
+                </label>
 
-                <option value="EK">
-                    EK
-                </option>
+                <select id="customer">
 
-                <option value="DESTA">
-                    DESTA
-                </option>
+                    <option value="EK">
+                        EK
+                    </option>
 
-            </select>
+                    <option value="DESTA">
+                        DESTA
+                    </option>
 
+                </select>
 
-            <!-- CONTAINER -->
-            <label for="container">
-                Container No.
-            </label>
-
-            <input
-                id="container"
-                type="text"
-                placeholder="Enter container number"
-            >
+            </div>
 
 
-            <!-- LOCATION -->
-            <label for="location">
-                Current Truck Location
-            </label>
+            <div class="form-row">
 
-            <select id="location">
+                <label>
+                    Container No.:
+                </label>
 
-                <option value="Galafi">
-                    Galafi
-                </option>
+                <input
+                    type="text"
+                    id="container"
+                    placeholder="Container number"
+                >
 
-                <option value="Semera / Logiya">
-                    Semera / Logiya
-                </option>
-
-                <option value="Mile">
-                    Mile
-                </option>
-
-                <option value="Bati">
-                    Bati
-                </option>
-
-                <option value="Kombolcha">
-                    Kombolcha
-                </option>
-
-                <option value="Kemise">
-                    Kemise
-                </option>
-
-                <option value="Shewa Robit">
-                    Shewa Robit
-                </option>
-
-                <option value="Debre Birhan">
-                    Debre Birhan
-                </option>
-
-            </select>
+            </div>
 
 
-            <!-- REMARK -->
-            <label for="remark">
-                Remark / Delay Reason
-            </label>
+            <div class="current-status">
+
+                <div class="current-title">
+                    Current Truck Location:
+                </div>
+
+                <select id="location">
+
+                    <option value="Galafi">
+                        Galafi
+                    </option>
+
+                    <option value="Semera / Logiya">
+                        Semera / Logiya
+                    </option>
+
+                    <option value="Mile">
+                        Mile
+                    </option>
+
+                    <option value="Bati">
+                        Bati
+                    </option>
+
+                    <option value="Kombolcha">
+                        Kombolcha
+                    </option>
+
+                    <option value="Kemise">
+                        Kemise
+                    </option>
+
+                    <option value="Shewa Robit">
+                        Shewa Robit
+                    </option>
+
+                    <option value="Debre Birhan">
+                        Debre Birhan
+                    </option>
+
+                </select>
+
+
+                <div
+                    class="status-line"
+                    id="status"
+                >
+                    🚚 Arrived at Galafi · 567 km remaining
+                </div>
+
+            </div>
+
+
+        </div>
+
+
+        <!-- RIGHT SIDE -->
+
+        <div class="update-right">
+
+            <div class="remark-label">
+                Remark / Delay Reason:
+            </div>
 
             <textarea
                 id="remark"
@@ -444,307 +542,484 @@ svg {
             ></textarea>
 
 
-            <!-- SAVE -->
             <button
-                class="save-btn"
+                class="save-button"
                 onclick="saveUpdate()"
             >
                 SAVE UPDATE
             </button>
 
 
-            <!-- SAVE MESSAGE -->
             <div
+                id="message"
                 class="message"
-                id="saveMessage"
             ></div>
-
-
-            <!-- CURRENT LOCATION -->
-            <div class="current-status">
-
-                <div class="status-title">
-                    CURRENT TRUCK LOCATION
-                </div>
-
-                <div
-                    class="status-location"
-                    id="status"
-                >
-                    🚚 Arrived at Galafi
-                </div>
-
-                <div
-                    class="distance"
-                    id="distance"
-                >
-                    567 km remaining
-                </div>
-
-            </div>
-
-
-            <!-- REMARK DISPLAY -->
-            <div class="remark-box">
-
-                <div class="remark-title">
-                    REMARK
-                </div>
-
-                <div
-                    class="remark-text"
-                    id="remarkDisplay"
-                >
-                    No remark available.
-                </div>
-
-            </div>
-
-        </div>
-
-
-        <!-- MAP -->
-        <div class="card map-card">
-
-            <h2>
-                Truck Route
-            </h2>
-
-            <div class="map-wrapper">
-
-                <svg
-                    viewBox="0 0 900 500"
-                    xmlns="http://www.w3.org/2000/svg"
-                >
-
-                    <!-- ROUTE LINE -->
-                    <path
-                        class="route-line"
-                        d="M90 420
-                           C150 390 170 350 230 330
-                           C290 310 300 270 360 250
-                           C420 230 450 200 500 180
-                           C550 160 590 130 640 120
-                           C700 105 740 80 810 60"
-                    />
-
-                    <path
-                        class="route-line-inner"
-                        d="M90 420
-                           C150 390 170 350 230 330
-                           C290 310 300 270 360 250
-                           C420 230 450 200 500 180
-                           C550 160 590 130 640 120
-                           C700 105 740 80 810 60"
-                    />
-
-
-                    <!-- GALAFI -->
-                    <g
-                        class="station"
-                        data-name="Galafi"
-                        transform="translate(90,420)"
-                    >
-
-                        <circle
-                            class="pulse"
-                            r="12"
-                        />
-
-                        <circle r="9" />
-
-                        <text
-                            class="name"
-                            x="-25"
-                            y="35"
-                        >
-                            Galafi
-                        </text>
-
-                    </g>
-
-
-                    <!-- SEMERA / LOGIYA -->
-                    <g
-                        class="station"
-                        data-name="Semera / Logiya"
-                        transform="translate(230,330)"
-                    >
-
-                        <circle
-                            class="pulse"
-                            r="12"
-                        />
-
-                        <circle r="9" />
-
-                        <text
-                            class="name"
-                            x="-40"
-                            y="-20"
-                        >
-                            Semera / Logiya
-                        </text>
-
-                    </g>
-
-
-                    <!-- MILE -->
-                    <g
-                        class="station"
-                        data-name="Mile"
-                        transform="translate(360,250)"
-                    >
-
-                        <circle
-                            class="pulse"
-                            r="12"
-                        />
-
-                        <circle r="9" />
-
-                        <text
-                            class="name"
-                            x="-15"
-                            y="-20"
-                        >
-                            Mile
-                        </text>
-
-                    </g>
-
-
-                    <!-- BATI -->
-                    <g
-                        class="station"
-                        data-name="Bati"
-                        transform="translate(500,180)"
-                    >
-
-                        <circle
-                            class="pulse"
-                            r="12"
-                        />
-
-                        <circle r="9" />
-
-                        <text
-                            class="name"
-                            x="-15"
-                            y="-20"
-                        >
-                            Bati
-                        </text>
-
-                    </g>
-
-
-                    <!-- KEMISE -->
-                    <g
-                        class="station"
-                        data-name="Kemise"
-                        transform="translate(550,160)"
-                    >
-
-                        <circle
-                            class="pulse"
-                            r="12"
-                        />
-
-                        <circle r="9" />
-
-                        <text
-                            class="name"
-                            x="-20"
-                            y="35"
-                        >
-                            Kemise
-                        </text>
-
-                    </g>
-
-
-                    <!-- KOMBOLCHA -->
-                    <g
-                        class="station"
-                        data-name="Kombolcha"
-                        transform="translate(640,120)"
-                    >
-
-                        <circle
-                            class="pulse"
-                            r="12"
-                        />
-
-                        <circle r="9" />
-
-                        <text
-                            class="name"
-                            x="-35"
-                            y="-20"
-                        >
-                            Kombolcha
-                        </text>
-
-                    </g>
-
-
-                    <!-- SHEWA ROBIT -->
-                    <g
-                        class="station"
-                        data-name="Shewa Robit"
-                        transform="translate(700,105)"
-                    >
-
-                        <circle
-                            class="pulse"
-                            r="12"
-                        />
-
-                        <circle r="9" />
-
-                        <text
-                            class="name"
-                            x="-35"
-                            y="-20"
-                        >
-                            Shewa Robit
-                        </text>
-
-                    </g>
-
-
-                    <!-- DEBRE BIRHAN -->
-                    <g
-                        class="station"
-                        data-name="Debre Birhan"
-                        transform="translate(810,60)"
-                    >
-
-                        <circle
-                            class="pulse"
-                            r="12"
-                        />
-
-                        <circle r="9" />
-
-                        <text
-                            class="name"
-                            x="-45"
-                            y="-20"
-                        >
-                            Debre Birhan
-                        </text>
-
-                    </g>
-
-                </svg>
-
-            </div>
 
         </div>
 
     </div>
+
+
+    <!-- =========================
+         ROUTE
+    ========================== -->
+
+    <div class="route-area">
+
+        <svg
+            class="route-svg"
+            viewBox="0 0 1000 980"
+            xmlns="http://www.w3.org/2000/svg"
+        >
+
+
+            <!-- =====================
+                 GREEN ROUTE
+            ====================== -->
+
+            <line
+                class="route-line"
+                x1="400"
+                y1="105"
+                x2="400"
+                y2="890"
+            />
+
+
+            <!-- =====================
+                 GALAFI
+            ====================== -->
+
+            <text
+                class="distance-label"
+                x="250"
+                y="115"
+                text-anchor="middle"
+            >
+                567 km remaining
+            </text>
+
+            <g
+                id="station-Galafi"
+                data-name="Galafi"
+            >
+
+                <circle
+                    id="pulse-Galafi"
+                    class="active-pulse"
+                    cx="400"
+                    cy="105"
+                    r="13"
+                />
+
+                <circle
+                    id="circle-Galafi"
+                    class="active-circle"
+                    cx="400"
+                    cy="105"
+                    r="10"
+                />
+
+                <text
+                    class="station-label"
+                    x="445"
+                    y="98"
+                >
+                    Galafi
+                </text>
+
+                <text
+                    class="station-amharic"
+                    x="445"
+                    y="122"
+                >
+                    ጋላፊ · Djibouti border
+                </text>
+
+            </g>
+
+
+            <!-- =====================
+                 SEMERA
+            ====================== -->
+
+            <text
+                class="distance-label"
+                x="250"
+                y="230"
+                text-anchor="middle"
+            >
+                453 km remaining
+            </text>
+
+            <g
+                id="station-Semera"
+                data-name="Semera / Logiya"
+            >
+
+                <circle
+                    id="pulse-Semera"
+                    class="active-pulse"
+                    cx="400"
+                    cy="230"
+                    r="13"
+                    style="display:none"
+                />
+
+                <circle
+                    id="circle-Semera"
+                    class="station-circle"
+                    cx="400"
+                    cy="230"
+                    r="9"
+                />
+
+                <text
+                    class="station-label"
+                    x="445"
+                    y="223"
+                >
+                    Semera / Logiya
+                </text>
+
+                <text
+                    class="station-amharic"
+                    x="445"
+                    y="247"
+                >
+                    ሰመራ / ሎጊያ
+                </text>
+
+            </g>
+
+
+            <!-- =====================
+                 MILE
+            ====================== -->
+
+            <text
+                class="distance-label"
+                x="250"
+                y="350"
+                text-anchor="middle"
+            >
+                366 km remaining
+            </text>
+
+            <g
+                id="station-Mile"
+                data-name="Mile"
+            >
+
+                <circle
+                    id="pulse-Mile"
+                    class="active-pulse"
+                    cx="400"
+                    cy="350"
+                    r="13"
+                    style="display:none"
+                />
+
+                <circle
+                    id="circle-Mile"
+                    class="station-circle"
+                    cx="400"
+                    cy="350"
+                    r="9"
+                />
+
+                <text
+                    class="station-label"
+                    x="445"
+                    y="343"
+                >
+                    Mile
+                </text>
+
+                <text
+                    class="station-amharic"
+                    x="445"
+                    y="367"
+                >
+                    ሚሌ
+                </text>
+
+            </g>
+
+
+            <!-- =====================
+                 BATI
+            ====================== -->
+
+            <text
+                class="distance-label"
+                x="250"
+                y="470"
+                text-anchor="middle"
+            >
+                218 km remaining
+            </text>
+
+            <g
+                id="station-Bati"
+                data-name="Bati"
+            >
+
+                <circle
+                    id="pulse-Bati"
+                    class="active-pulse"
+                    cx="400"
+                    cy="470"
+                    r="13"
+                    style="display:none"
+                />
+
+                <circle
+                    id="circle-Bati"
+                    class="station-circle"
+                    cx="400"
+                    cy="470"
+                    r="9"
+                />
+
+                <text
+                    class="station-label"
+                    x="445"
+                    y="463"
+                >
+                    Bati
+                </text>
+
+                <text
+                    class="station-amharic"
+                    x="445"
+                    y="487"
+                >
+                    ባቲ
+                </text>
+
+            </g>
+
+
+            <!-- =====================
+                 KOMBOLCHA
+            ====================== -->
+
+            <text
+                class="distance-label"
+                x="250"
+                y="590"
+                text-anchor="middle"
+            >
+                200 km remaining
+            </text>
+
+            <g
+                id="station-Kombolcha"
+                data-name="Kombolcha"
+            >
+
+                <circle
+                    id="pulse-Kombolcha"
+                    class="active-pulse"
+                    cx="400"
+                    cy="590"
+                    r="13"
+                    style="display:none"
+                />
+
+                <circle
+                    id="circle-Kombolcha"
+                    class="station-circle"
+                    cx="400"
+                    cy="590"
+                    r="9"
+                />
+
+                <text
+                    class="station-label"
+                    x="445"
+                    y="583"
+                >
+                    Kombolcha
+                </text>
+
+                <text
+                    class="station-amharic"
+                    x="445"
+                    y="607"
+                >
+                    ኮምቦልቻ
+                </text>
+
+            </g>
+
+
+            <!-- =====================
+                 KEMISE
+            ====================== -->
+
+            <text
+                class="distance-label"
+                x="250"
+                y="710"
+                text-anchor="middle"
+            >
+                150 km remaining
+            </text>
+
+            <g
+                id="station-Kemise"
+                data-name="Kemise"
+            >
+
+                <circle
+                    id="pulse-Kemise"
+                    class="active-pulse"
+                    cx="400"
+                    cy="710"
+                    r="13"
+                    style="display:none"
+                />
+
+                <circle
+                    id="circle-Kemise"
+                    class="station-circle"
+                    cx="400"
+                    cy="710"
+                    r="9"
+                />
+
+                <text
+                    class="station-label"
+                    x="445"
+                    y="703"
+                >
+                    Kemise
+                </text>
+
+                <text
+                    class="station-amharic"
+                    x="445"
+                    y="727"
+                >
+                    ከሚሴ
+                </text>
+
+            </g>
+
+
+            <!-- =====================
+                 SHEWA ROBIT
+            ====================== -->
+
+            <text
+                class="distance-label"
+                x="250"
+                y="830"
+                text-anchor="middle"
+            >
+                60 km remaining
+            </text>
+
+            <g
+                id="station-Shewa"
+                data-name="Shewa Robit"
+            >
+
+                <circle
+                    id="pulse-Shewa"
+                    class="active-pulse"
+                    cx="400"
+                    cy="830"
+                    r="13"
+                    style="display:none"
+                />
+
+                <circle
+                    id="circle-Shewa"
+                    class="station-circle"
+                    cx="400"
+                    cy="830"
+                    r="9"
+                />
+
+                <text
+                    class="station-label"
+                    x="445"
+                    y="823"
+                >
+                    Shewa Robit
+                </text>
+
+                <text
+                    class="station-amharic"
+                    x="445"
+                    y="847"
+                >
+                    ሸዋ ሮቢት
+                </text>
+
+            </g>
+
+
+            <!-- =====================
+                 DEBRE BIRHAN
+            ====================== -->
+
+            <text
+                class="distance-label"
+                x="250"
+                y="930"
+                text-anchor="middle"
+            >
+                0 km · arrived
+            </text>
+
+            <g
+                id="station-Debre"
+                data-name="Debre Birhan"
+            >
+
+                <circle
+                    id="pulse-Debre"
+                    class="active-pulse"
+                    cx="400"
+                    cy="930"
+                    r="13"
+                    style="display:none"
+                />
+
+                <circle
+                    id="circle-Debre"
+                    class="destination-circle"
+                    cx="400"
+                    cy="930"
+                    r="10"
+                />
+
+                <text
+                    class="station-label"
+                    x="445"
+                    y="923"
+                >
+                    Debre Birhan
+                </text>
+
+                <text
+                    class="station-amharic"
+                    x="445"
+                    y="947"
+                >
+                    ደብረ ብርሃን · destination
+                </text>
+
+            </g>
+
+        </svg>
+
+    </div>
+
 
 </div>
 
@@ -752,7 +1027,7 @@ svg {
 <script>
 
 /* =========================================================
-   SUPABASE CONNECTION
+   SUPABASE
 ========================================================= */
 
 const SUPABASE_URL =
@@ -820,49 +1095,143 @@ const remarkInput =
 const statusElement =
     document.getElementById("status");
 
-const distanceElement =
-    document.getElementById("distance");
-
-const remarkDisplay =
-    document.getElementById("remarkDisplay");
-
-const saveMessage =
-    document.getElementById("saveMessage");
+const messageElement =
+    document.getElementById("message");
 
 
 /* =========================================================
-   UPDATE MAP
+   STATION IDS
+========================================================= */
+
+const stationIDs = {
+
+    "Galafi": {
+        circle: "circle-Galafi",
+        pulse: "pulse-Galafi"
+    },
+
+    "Semera / Logiya": {
+        circle: "circle-Semera",
+        pulse: "pulse-Semera"
+    },
+
+    "Mile": {
+        circle: "circle-Mile",
+        pulse: "pulse-Mile"
+    },
+
+    "Bati": {
+        circle: "circle-Bati",
+        pulse: "pulse-Bati"
+    },
+
+    "Kombolcha": {
+        circle: "circle-Kombolcha",
+        pulse: "pulse-Kombolcha"
+    },
+
+    "Kemise": {
+        circle: "circle-Kemise",
+        pulse: "pulse-Kemise"
+    },
+
+    "Shewa Robit": {
+        circle: "circle-Shewa",
+        pulse: "pulse-Shewa"
+    },
+
+    "Debre Birhan": {
+        circle: "circle-Debre",
+        pulse: "pulse-Debre"
+    }
+
+};
+
+
+/* =========================================================
+   UPDATE CURRENT LOCATION ON MAP
 ========================================================= */
 
 function updateMap(location) {
 
-    document
-        .querySelectorAll(".station")
-        .forEach(station => {
+    /* Reset all stations */
 
-            const active =
-                station.dataset.name === location;
+    Object.values(stationIDs).forEach(station => {
 
-            station.classList.toggle(
-                "active",
-                active
+        const circle =
+            document.getElementById(
+                station.circle
             );
 
-        });
+        const pulse =
+            document.getElementById(
+                station.pulse
+            );
 
+
+        circle.classList.remove(
+            "active-circle"
+        );
+
+        circle.classList.add(
+            "station-circle"
+        );
+
+
+        pulse.style.display =
+            "none";
+
+    });
+
+
+    /* Activate selected station */
+
+    const selected =
+        stationIDs[location];
+
+
+    if (!selected) {
+        return;
+    }
+
+
+    const activeCircle =
+        document.getElementById(
+            selected.circle
+        );
+
+    const activePulse =
+        document.getElementById(
+            selected.pulse
+        );
+
+
+    activeCircle.classList.remove(
+        "station-circle"
+    );
+
+    activeCircle.classList.add(
+        "active-circle"
+    );
+
+
+    activePulse.style.display =
+        "block";
+
+
+    /* Current status */
 
     statusElement.textContent =
-        "🚚 Arrived at " + location;
-
-
-    distanceElement.textContent =
-        distances[location] || "";
+        "🚚 Arrived at " +
+        location +
+        " · " +
+        distances[location];
 
 }
 
 
 /* =========================================================
-   LOAD DATA FROM SUPABASE
+   LOAD DATA
 ========================================================= */
 
 async function loadData() {
@@ -886,7 +1255,7 @@ async function loadData() {
     if (error) {
 
         console.error(
-            "Load error:",
+            "Supabase load error:",
             error
         );
 
@@ -899,7 +1268,7 @@ async function loadData() {
     }
 
 
-    /* LOCATION */
+    /* Location */
 
     if (data.location) {
 
@@ -913,7 +1282,7 @@ async function loadData() {
     }
 
 
-    /* CUSTOMER */
+    /* Customer */
 
     if (data.customer) {
 
@@ -923,7 +1292,7 @@ async function loadData() {
     }
 
 
-    /* CONTAINER */
+    /* Container */
 
     if (data.container_no !== null) {
 
@@ -933,22 +1302,12 @@ async function loadData() {
     }
 
 
-    /* REMARK */
+    /* Remark */
 
-    if (data.remark) {
+    if (data.remark !== null) {
 
         remarkInput.value =
-            data.remark;
-
-        remarkDisplay.textContent =
-            data.remark;
-
-    } else {
-
-        remarkInput.value = "";
-
-        remarkDisplay.textContent =
-            "No remark available.";
+            data.remark || "";
 
     }
 
@@ -974,10 +1333,10 @@ async function saveUpdate() {
         remarkInput.value.trim();
 
 
-    saveMessage.className =
+    messageElement.className =
         "message";
 
-    saveMessage.textContent =
+    messageElement.textContent =
         "";
 
 
@@ -1012,14 +1371,14 @@ async function saveUpdate() {
     if (error) {
 
         console.error(
-            "Save error:",
+            "Supabase save error:",
             error
         );
 
-        saveMessage.className =
+        messageElement.className =
             "message error";
 
-        saveMessage.textContent =
+        messageElement.textContent =
             "Update failed: " +
             error.message;
 
@@ -1027,37 +1386,24 @@ async function saveUpdate() {
     }
 
 
-    /* UPDATE SCREEN */
+    /* Update screen immediately */
 
     updateMap(location);
 
 
-    if (remark) {
-
-        remarkDisplay.textContent =
-            remark;
-
-    } else {
-
-        remarkDisplay.textContent =
-            "No remark available.";
-
-    }
-
-
-    saveMessage.className =
+    messageElement.className =
         "message success";
 
-    saveMessage.textContent =
+    messageElement.textContent =
         "✓ Update saved successfully.";
 
 
     setTimeout(() => {
 
-        saveMessage.className =
+        messageElement.className =
             "message";
 
-        saveMessage.textContent =
+        messageElement.textContent =
             "";
 
     }, 3000);
@@ -1089,7 +1435,7 @@ loadData();
 
 
 /* =========================================================
-   AUTO REFRESH EVERY 5 SECONDS
+   AUTO REFRESH
 ========================================================= */
 
 setInterval(
@@ -1099,5 +1445,7 @@ setInterval(
 
 </script>
 
+
 </body>
+
 </html>
