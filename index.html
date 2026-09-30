@@ -1268,9 +1268,14 @@ async function loadData() {
     }
 
 
-    /* Location */
+    /* =========================
+       LOCATION
+    ========================= */
 
-    if (data.location) {
+    if (
+        document.activeElement !== locationSelect &&
+        data.location
+    ) {
 
         locationSelect.value =
             data.location;
@@ -1282,9 +1287,14 @@ async function loadData() {
     }
 
 
-    /* Customer */
+    /* =========================
+       CUSTOMER
+    ========================= */
 
-    if (data.customer) {
+    if (
+        document.activeElement !== customerSelect &&
+        data.customer
+    ) {
 
         customerSelect.value =
             data.customer;
@@ -1292,9 +1302,14 @@ async function loadData() {
     }
 
 
-    /* Container */
+    /* =========================
+       CONTAINER
+    ========================= */
 
-    if (data.container_no !== null) {
+    if (
+        document.activeElement !== containerInput &&
+        data.container_no !== null
+    ) {
 
         containerInput.value =
             data.container_no || "";
@@ -1302,9 +1317,13 @@ async function loadData() {
     }
 
 
-    /* Remark */
+    /* =========================
+       REMARK
+    ========================= */
 
-    if (data.remark !== null) {
+    if (
+        document.activeElement !== remarkInput
+    ) {
 
         remarkInput.value =
             data.remark || "";
@@ -1406,7 +1425,7 @@ async function saveUpdate() {
         messageElement.textContent =
             "";
 
-    }, 3000);
+    }, 3,000);
 
 }
 
