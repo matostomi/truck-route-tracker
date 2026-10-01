@@ -1,2056 +1,669 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-
 <meta charset="UTF-8">
-
-<meta name="viewport"
-      content="width=device-width, initial-scale=1.0">
-
-<title>
-Synergy Plus Logistics - Truck Tracker
-</title>
-
-
-<!-- SUPABASE -->
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
-
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Truck Route Tracker</title>
 <style>
-
-/* =========================================================
-   GLOBAL
-========================================================= */
-
-* {
-    box-sizing: border-box;
-}
-
-body {
-    margin: 0;
-    font-family: Arial, Helvetica, sans-serif;
-    background: #f3f6fa;
-    color: #172033;
-}
-
-.page {
-    max-width: 1250px;
-    margin: auto;
-    padding: 24px;
-}
-
-
-/* =========================================================
-   HEADER
-========================================================= */
-
-.header {
-    background: linear-gradient(
-        135deg,
-        #101827,
-        #1d2939
-    );
-
-    color: white;
-
-    border-radius: 20px;
-
-    padding: 28px 32px;
-
-    margin-bottom: 20px;
-
-    box-shadow:
-        0 8px 25px rgba(0,0,0,.08);
-}
-
-.header h1 {
-    margin: 0;
-
-    font-size: 30px;
-
-    letter-spacing: -.5px;
-}
-
-.header p {
-    margin: 8px 0 0;
-
-    color: #cbd5e1;
-
-    font-size: 15px;
-}
-
-
-/* =========================================================
-   TOP METRICS
-========================================================= */
-
-.metrics {
-    display: grid;
-
-    grid-template-columns:
-        repeat(4, 1fr);
-
-    gap: 15px;
-
-    margin-bottom: 20px;
-}
-
-.metric-card {
-    background: white;
-
-    border-radius: 16px;
-
-    padding: 18px;
-
-    box-shadow:
-        0 5px 20px rgba(0,0,0,.06);
-}
-
-.metric-icon {
-    font-size: 20px;
-
-    margin-bottom: 8px;
-}
-
-.metric-value {
-    font-size: 22px;
-
-    font-weight: bold;
-
-    color: #172033;
-}
-
-.metric-label {
-    margin-top: 5px;
-
-    color: #64748b;
-
-    font-size: 13px;
-}
-
-
-/* =========================================================
-   MAIN GRID
-========================================================= */
-
-.main-grid {
-    display: grid;
-
-    grid-template-columns:
-        390px 1fr;
-
-    gap: 20px;
-}
-
-
-/* =========================================================
-   CARD
-========================================================= */
-
-.card {
-    background: white;
-
-    border-radius: 18px;
-
-    padding: 22px;
-
-    box-shadow:
-        0 5px 20px rgba(0,0,0,.06);
-}
-
-.card-title {
-    font-size: 19px;
-
-    font-weight: bold;
-
-    margin-bottom: 18px;
-}
-
-
-/* =========================================================
-   FORM
-========================================================= */
-
-.form-group {
-    margin-bottom: 14px;
-}
-
-.form-group label {
-    display: block;
-
-    font-size: 13px;
-
-    font-weight: bold;
-
-    margin-bottom: 6px;
-
-    color: #334155;
-}
-
-.form-group label span {
-    color: #64748b;
-
-    font-weight: normal;
-}
-
-input,
-select,
-textarea {
-
-    width: 100%;
-
-    border: 1px solid #d5dbe3;
-
-    border-radius: 10px;
-
-    background: white;
-
-    padding: 12px;
-
-    font-size: 14px;
-
-    color: #172033;
-
-    outline: none;
-
-    font-family:
-        Arial,
-        Helvetica,
-        sans-serif;
-}
-
-input:focus,
-select:focus,
-textarea:focus {
-
-    border-color: #2563eb;
-
-    box-shadow:
-        0 0 0 3px rgba(
-            37,
-            99,
-            235,
-            .10
-        );
-}
-
-textarea {
-
-    min-height: 110px;
-
-    resize: vertical;
-}
-
-
-/* =========================================================
-   SAVE BUTTON
-========================================================= */
-
-.save-button {
-
-    width: 100%;
-
-    border: none;
-
-    border-radius: 10px;
-
-    padding: 13px;
-
-    background: #2563eb;
-
-    color: white;
-
-    font-weight: bold;
-
-    font-size: 14px;
-
-    cursor: pointer;
-
-    margin-top: 5px;
-}
-
-.save-button:hover {
-
-    background: #1d4ed8;
-}
-
-
-/* =========================================================
-   MESSAGE
-========================================================= */
-
-.message {
-
-    display: none;
-
-    margin-top: 10px;
-
-    padding: 10px;
-
-    border-radius: 8px;
-
-    font-size: 13px;
-}
-
-.message.success {
-
-    display: block;
-
-    background: #dcfce7;
-
-    color: #166534;
-}
-
-.message.error {
-
-    display: block;
-
-    background: #fee2e2;
-
-    color: #991b1b;
-}
-
-
-/* =========================================================
-   CURRENT STATUS
-========================================================= */
-
-.current-status {
-
-    margin-top: 20px;
-
-    padding: 16px;
-
-    border-radius: 14px;
-
-    background: #f8fafc;
-
-    border: 1px solid #e2e8f0;
-}
-
-.status-small {
-
-    font-size: 11px;
-
-    font-weight: bold;
-
-    color: #64748b;
-
-    text-transform: uppercase;
-
-    margin-bottom: 6px;
-}
-
-.status-location {
-
-    font-size: 20px;
-
-    font-weight: bold;
-
-    color: #172033;
-}
-
-.status-distance {
-
-    margin-top: 5px;
-
-    font-size: 14px;
-
-    color: #2563eb;
-
-    font-weight: bold;
-}
-
-
-/* =========================================================
-   REMARK DISPLAY
-========================================================= */
-
-.remark-display {
-
-    margin-top: 14px;
-
-    padding: 15px;
-
-    border-radius: 14px;
-
-    background: #fff7ed;
-
-    border: 1px solid #fed7aa;
-}
-
-.remark-display-title {
-
-    font-size: 11px;
-
-    text-transform: uppercase;
-
-    font-weight: bold;
-
-    color: #9a3412;
-
-    margin-bottom: 6px;
-}
-
-.remark-display-text {
-
-    font-size: 14px;
-
-    line-height: 1.5;
-
-    color: #431407;
-
-    white-space: pre-wrap;
-}
-
-
-/* =========================================================
-   MAP CARD
-========================================================= */
-
-.map-card {
-
-    padding: 0;
-
-    overflow: hidden;
-}
-
-.map-header {
-
-    padding: 20px 22px;
-
-    border-bottom: 1px solid #e5e7eb;
-}
-
-.map-header h2 {
-
-    margin: 0;
-
-    font-size: 19px;
-}
-
-.map-header p {
-
-    margin: 5px 0 0;
-
-    color: #64748b;
-
-    font-size: 13px;
-}
-
-#map {
-
-    width: 100%;
-
-    height: 650px;
-}
-
-
-/* =========================================================
-   MAP LEGEND
-========================================================= */
-
-.map-legend {
-
-    display: flex;
-
-    gap: 20px;
-
-    padding: 13px 20px;
-
-    border-top: 1px solid #e5e7eb;
-
-    font-size: 12px;
-
-    color: #64748b;
-}
-
-.legend-item {
-
-    display: flex;
-
-    align-items: center;
-
-    gap: 6px;
-}
-
-.legend-dot {
-
-    width: 10px;
-
-    height: 10px;
-
-    border-radius: 50%;
-}
-
-.legend-current {
-
-    background: #ef6f3f;
-}
-
-.legend-stop {
-
-    background: #22a879;
-}
-
-
-/* =========================================================
-   BILINGUAL LOCATION CARDS
-========================================================= */
-
-.route-list {
-
-    margin-top: 20px;
-
-    display: grid;
-
-    grid-template-columns:
-        repeat(2, 1fr);
-
-    gap: 10px;
-}
-
-.route-item {
-
-    padding: 12px;
-
-    border-radius: 10px;
-
-    background: #f8fafc;
-
-    border: 1px solid #e2e8f0;
-
-    cursor: pointer;
-
-    transition: .2s;
-}
-
-.route-item:hover {
-
-    border-color: #2563eb;
-
-    background: #eff6ff;
-}
-
-.route-item.active {
-
-    background: #fff7ed;
-
-    border-color: #fdba74;
-}
-
-.route-name {
-
-    font-weight: bold;
-
-    font-size: 14px;
-}
-
-.route-amharic {
-
-    margin-top: 3px;
-
-    font-size: 12px;
-
-    color: #64748b;
-}
-
-.route-distance {
-
-    margin-top: 5px;
-
-    font-size: 11px;
-
-    color: #2563eb;
-}
-
-
-/* =========================================================
-   RESPONSIVE
-========================================================= */
-
-@media (max-width: 950px) {
-
-    .metrics {
-
-        grid-template-columns:
-            repeat(2, 1fr);
-    }
-
-    .main-grid {
-
-        grid-template-columns: 1fr;
-    }
-
-    #map {
-
-        height: 500px;
-    }
-}
-
-
-@media (max-width: 600px) {
-
-    .page {
-
-        padding: 12px;
-    }
-
-    .header {
-
-        padding: 22px;
-    }
-
-    .header h1 {
-
-        font-size: 23px;
-    }
-
-    .metrics {
-
-        grid-template-columns: 1fr 1fr;
-    }
-
-    .route-list {
-
-        grid-template-columns: 1fr;
-    }
-
-    #map {
-
-        height: 450px;
-    }
-
-}
-
+*{box-sizing:border-box}
+body{margin:0;background:#f4f7fb;font-family:Arial,sans-serif;color:#172033}
+.wrap{max-width:1100px;margin:auto;padding:18px}
+.card{background:#fff;border:1px solid #e3e8ef;border-radius:18px;padding:20px;margin-bottom:16px;box-shadow:0 5px 20px rgba(0,0,0,.05)}
+h1{margin:0 0 5px;font-size:25px}.sub{color:#667085;font-size:14px}
+.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
+.field label{display:block;font-weight:700;margin-bottom:7px;font-size:14px}
+input,select,textarea{width:100%;padding:12px;border:1px solid #d0d5dd;border-radius:10px;font-size:15px;background:#fff}
+textarea{min-height:100px;resize:vertical}
+button{border:0;border-radius:10px;padding:13px 20px;background:#155eef;color:#fff;font-weight:700;font-size:15px;cursor:pointer}
+button:disabled{opacity:.6}
+.status{margin-top:12px;padding:14px;border-radius:12px;background:#eef4ff;font-weight:700}
+.remark{margin-top:12px;padding:14px;background:#f8fafc;border-radius:12px;white-space:pre-wrap}
+.map-wrap{height:480px;border-radius:14px;overflow:hidden;border:1px solid #e4e7ec}
+#map{height:100%;width:100%}
+.route-title{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.route-list{display:grid;gap:8px;margin-top:14px}
+.stop{display:flex;justify-content:space-between;align-items:center;padding:12px 14px;border:1px solid #e5e7eb;border-radius:12px;background:#fff}
+.stop.current{border:2px solid #155eef;background:#eef4ff;animation:routePulse 1.4s infinite}
+.stop-name{font-weight:700}.stop-am{font-size:13px;color:#667085;margin-top:3px}
+.stop-distance{font-size:13px;color:#667085}
+@keyframes routePulse{0%,100%{box-shadow:0 0 0 0 rgba(21,94,239,.15)}50%{box-shadow:0 0 0 7px rgba(21,94,239,.06)}}
+.success{color:#087443;margin-top:10px}.error{color:#b42318;margin-top:10px}
+@media(max-width:700px){.grid{grid-template-columns:1fr}.map-wrap{height:390px}.wrap{padding:10px}}
 </style>
-
 </head>
 
-
 <body>
-
-
-<div class="page">
-
-
-<!-- ======================================================
-     HEADER
-======================================================= -->
-
-<div class="header">
-
-    <h1>
-        GALAFI → KOMBOLCHA → DEBRE BIRHAN
-    </h1>
-
-    <p>
-        Synergy Plus Logistics · Ethio-Djibouti Truck Status
-    </p>
-
-</div>
-
-
-<!-- ======================================================
-     METRICS
-======================================================= -->
-
-<div class="metrics">
-
-
-    <div class="metric-card">
-
-        <div class="metric-icon">
-            🛣️
-        </div>
-
-        <div class="metric-value">
-            567 km
-        </div>
-
-        <div class="metric-label">
-            Total Route · ጠቅላላ መንገድ
-        </div>
-
-    </div>
-
-
-    <div class="metric-card">
-
-        <div class="metric-icon">
-            🚚
-        </div>
-
-        <div class="metric-value">
-            2 → 3 Days
-        </div>
-
-        <div class="metric-label">
-            Estimated Arrival · የመድረሻ ጊዜ
-        </div>
-
-    </div>
-
-
-    <div class="metric-card">
-
-        <div class="metric-icon">
-            ⛰️
-        </div>
-
-        <div class="metric-value">
-            300m → 2,840m
-        </div>
-
-        <div class="metric-label">
-            Elevation · ከፍታ
-        </div>
-
-    </div>
-
-
-    <div class="metric-card">
-
-        <div class="metric-icon">
-            📍
-        </div>
-
-        <div class="metric-value">
-            8
-        </div>
-
-        <div class="metric-label">
-            Key Stations · ዋና ማቆሚያዎች
-        </div>
-
-    </div>
-
-
-</div>
-
-
-<!-- ======================================================
-     MAIN
-======================================================= -->
-
-<div class="main-grid">
-
-
-<!-- ======================================================
-     LEFT CARD
-======================================================= -->
+<div class="wrap">
 
 <div class="card">
-
-    <div class="card-title">
-
-        Shipment Information
-        <span style="color:#64748b;font-weight:normal;">
-            · የጭነት መረጃ
-        </span>
-
-    </div>
-
-
-    <!-- CUSTOMER -->
-
-    <div class="form-group">
-
-        <label>
-            Customer
-            <span>· ደንበኛ</span>
-        </label>
-
-        <select id="customer">
-
-            <option value="EK">
-                EK
-            </option>
-
-            <option value="DESTA">
-                DESTA
-            </option>
-
-        </select>
-
-    </div>
-
-
-    <!-- CONTAINER -->
-
-    <div class="form-group">
-
-        <label>
-            Container No.
-            <span>· ኮንቴነር ቁጥር</span>
-        </label>
-
-        <input
-            type="text"
-            id="container"
-            placeholder="Enter container number"
-        >
-
-    </div>
-
-
-    <!-- BILL NO -->
-
-    <div class="form-group">
-
-        <label>
-            Bill No.
-            <span>· የቢል ቁጥር</span>
-        </label>
-
-        <input
-            type="text"
-            id="billNo"
-            placeholder="Enter bill number"
-        >
-
-    </div>
-
-
-    <!-- LOCATION -->
-
-    <div class="form-group">
-
-        <label>
-            Current Truck Location
-            <span>· የአሁኑ የጭነት መኪና ቦታ</span>
-        </label>
-
-        <select id="location">
-
-            <option value="Galafi">
-                Galafi · ጋላፊ
-            </option>
-
-            <option value="Semera / Logiya">
-                Semera / Logiya · ሰመራ / ሎጊያ
-            </option>
-
-            <option value="Mile">
-                Mile · ሚሌ
-            </option>
-
-            <option value="Bati">
-                Bati · ባቲ
-            </option>
-
-            <option value="Kombolcha">
-                Kombolcha · ኮምቦልቻ
-            </option>
-
-            <option value="Kemise">
-                Kemise · ከሚሴ
-            </option>
-
-            <option value="Shewa Robit">
-                Shewa Robit · ሸዋ ሮቢት
-            </option>
-
-            <option value="Debre Birhan">
-                Debre Birhan · ደብረ ብርሃን
-            </option>
-
-        </select>
-
-    </div>
-
-
-    <!-- REMARK -->
-
-    <div class="form-group">
-
-        <label>
-            Remark / Delay Reason
-            <span>· ማስታወሻ / የመዘግየት ምክንያት</span>
-        </label>
-
-        <textarea
-            id="remark"
-            placeholder="Write what the driver reported..."
-        ></textarea>
-
-    </div>
-
-
-    <!-- SAVE -->
-
-    <button
-        class="save-button"
-        onclick="saveUpdate()"
-    >
-
-        SAVE UPDATE · አስቀምጥ
-
-    </button>
-
-
-    <div
-        id="message"
-        class="message"
-    ></div>
-
-
-    <!-- CURRENT STATUS -->
-
-    <div class="current-status">
-
-        <div class="status-small">
-
-            Current Truck Location
-            · የአሁኑ ቦታ
-
-        </div>
-
-        <div
-            class="status-location"
-            id="status"
-        >
-
-            🚚 Arrived at Galafi
-
-        </div>
-
-        <div
-            class="status-distance"
-            id="distance"
-        >
-
-            567 km remaining
-
-        </div>
-
-    </div>
-
-
-    <!-- REMARK DISPLAY -->
-
-    <div class="remark-display">
-
-        <div class="remark-display-title">
-
-            Latest Remark
-            · የመጨረሻ ማስታወሻ
-
-        </div>
-
-        <div
-            class="remark-display-text"
-            id="remarkDisplay"
-        >
-
-            No remark available.
-            · ምንም ማስታወሻ የለም።
-
-        </div>
-
-    </div>
-
-
+  <h1>🚚 Truck Route Tracker</h1>
+  <div class="sub">Live shipment location and route status</div>
 </div>
 
+<div class="card">
+  <h2>Shipment Information</h2>
 
-<!-- ======================================================
-     RIGHT MAP CARD
-======================================================= -->
-
-<div class="card map-card">
-
-
-    <div class="map-header">
-
-        <h2>
-
-            Truck Route
-            · የጭነት መኪና መንገድ
-
-        </h2>
-
-        <p>
-
-            Galafi → Debre Birhan
-            · ጋላፊ → ደብረ ብርሃን
-
-        </p>
-
+  <div class="grid">
+    <div class="field">
+      <label>Customer</label>
+      <select id="customer">
+        <option value="EK">EK</option>
+        <option value="DESTA">DESTA</option>
+      </select>
     </div>
 
+    <div class="field">
+      <label>Container No.</label>
+      <input id="container_no" type="text" placeholder="Enter container number">
+    </div>
 
-    <!-- GOOGLE MAP -->
+    <div class="field">
+      <label>Bill No.</label>
+      <input id="bill_no" type="text" placeholder="Enter Bill No.">
+    </div>
 
+    <div class="field">
+      <label>Current Truck Location</label>
+      <select id="location">
+        <option value="Galafi">Galafi</option>
+        <option value="Semera / Logiya">Semera / Logiya</option>
+        <option value="Mile">Mile</option>
+        <option value="Bati">Bati</option>
+        <option value="Kombolcha">Kombolcha</option>
+        <option value="Kemise">Kemise</option>
+        <option value="Shewa Robit">Shewa Robit</option>
+        <option value="Debre Birhan">Debre Birhan</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="field" style="margin-top:14px">
+    <label>Remark / Delay Reason</label>
+    <textarea id="remark" placeholder="Example: Driver stopped for fuel in Bati."></textarea>
+  </div>
+
+  <button id="saveBtn" style="margin-top:14px">Save Update</button>
+  <div id="saveMessage"></div>
+
+  <div id="status" class="status"></div>
+
+  <div class="remark">
+    <strong>Latest Remark:</strong><br>
+    <span id="remarkDisplay">No remark available.</span>
+  </div>
+</div>
+
+<!-- ENGLISH + AMHARIC ONLY IN ROUTE SECTION -->
+<div class="card">
+  <div class="route-title">
+    <h2 style="margin:0">Google Maps Route</h2>
+    <span>🇬🇧 English · 🇪🇹 Amharic</span>
+  </div>
+
+  <div class="map-wrap" style="margin-top:14px">
     <div id="map"></div>
+  </div>
 
+  <div class="route-list">
 
-    <!-- MAP LEGEND -->
-
-    <div class="map-legend">
-
-        <div class="legend-item">
-
-            <div class="legend-dot legend-current"></div>
-
-            Current Location
-            · የአሁኑ ቦታ
-
-        </div>
-
-
-        <div class="legend-item">
-
-            <div class="legend-dot legend-stop"></div>
-
-            Route Station
-            · የመንገድ ማቆሚያ
-
-        </div>
-
+    <div class="stop" data-location="Galafi">
+      <div>
+        <div class="stop-name">Galafi · ጋላፊ</div>
+        <div class="stop-am">Djibouti border · የጅቡቲ ድንበር</div>
+      </div>
+      <div class="stop-distance">567 km</div>
     </div>
 
-
-    <!-- ROUTE LIST -->
-
-    <div style="padding:0 20px 20px;">
-
-        <div class="route-list"
-             id="routeList">
-
-        </div>
-
+    <div class="stop" data-location="Semera / Logiya">
+      <div>
+        <div class="stop-name">Semera / Logiya · ሰመራ / ሎጊያ</div>
+      </div>
+      <div class="stop-distance">453 km</div>
     </div>
 
+    <div class="stop" data-location="Mile">
+      <div>
+        <div class="stop-name">Mile · ሚሌ</div>
+      </div>
+      <div class="stop-distance">366 km</div>
+    </div>
 
+    <div class="stop" data-location="Bati">
+      <div>
+        <div class="stop-name">Bati · ባቲ</div>
+      </div>
+      <div class="stop-distance">218 km</div>
+    </div>
+
+    <div class="stop" data-location="Kombolcha">
+      <div>
+        <div class="stop-name">Kombolcha · ኮምቦልቻ</div>
+      </div>
+      <div class="stop-distance">200 km</div>
+    </div>
+
+    <div class="stop" data-location="Kemise">
+      <div>
+        <div class="stop-name">Kemise · ከሚሴ</div>
+      </div>
+      <div class="stop-distance">150 km</div>
+    </div>
+
+    <div class="stop" data-location="Shewa Robit">
+      <div>
+        <div class="stop-name">Shewa Robit · ሸዋ ሮቢት</div>
+      </div>
+      <div class="stop-distance">60 km</div>
+    </div>
+
+    <div class="stop" data-location="Debre Birhan">
+      <div>
+        <div class="stop-name">Debre Birhan · ደብረ ብርሃን</div>
+      </div>
+      <div class="stop-distance">0 km · Arrived</div>
+    </div>
+
+  </div>
 </div>
 
-
 </div>
-
-
-</div>
-
 
 <script>
-
-/* =========================================================
+/* ================================
    SUPABASE
-========================================================= */
+================================ */
 
 const SUPABASE_URL =
-    "https://nqngncyvtvsptlyqizpg.supabase.co";
+  "https://nqngncyvtvsptlyqizpg.supabase.co";
 
 const SUPABASE_KEY =
-    "sb_publishable_tUa87rjEkzu1OTM3Fd_X4w_ayDg6RW9";
+  "sb_publishable_tUa87rjEkzu1OTM3Fd_X4w_ayDg6RW9";
 
-const supabaseClient =
-    window.supabase.createClient(
-        SUPABASE_URL,
-        SUPABASE_KEY
-    );
-
-
-/* =========================================================
+/* ================================
    GOOGLE MAPS API KEY
-========================================================= */
-
-/*
-   PASTE YOUR GOOGLE MAPS API KEY HERE.
-
-   Example:
-
-   const GOOGLE_MAPS_API_KEY =
-       "AIzaSyXXXXXXXXXXXXXXXXXXXXXXXX";
-
-*/
+================================ */
 
 const GOOGLE_MAPS_API_KEY =
-    "AIzaSyDPQmjEWfvLoapdCjWjUBkRf_aufaxkW8M";
+  "AIzaSyDPQmjEWfvLoapdCjWjUBkRf_aufaxkW8M";
 
-
-/* =========================================================
-   ROUTE DATA
-========================================================= */
+/* ================================
+   ROUTE LOCATIONS
+================================ */
 
 const locations = {
+  "Galafi": {
+    lat:11.1570,
+    lng:42.7150,
+    en:"Galafi",
+    am:"ጋላፊ",
+    distance:"567 km remaining"
+  },
 
-    "Galafi": {
+  "Semera / Logiya": {
+    lat:11.7940,
+    lng:41.0040,
+    en:"Semera / Logiya",
+    am:"ሰመራ / ሎጊያ",
+    distance:"453 km remaining"
+  },
 
-        amharic:
-            "ጋላፊ",
+  "Mile": {
+    lat:11.4600,
+    lng:40.9800,
+    en:"Mile",
+    am:"ሚሌ",
+    distance:"366 km remaining"
+  },
 
-        distance:
-            "567 km remaining",
+  "Bati": {
+    lat:11.1880,
+    lng:40.0160,
+    en:"Bati",
+    am:"ባቲ",
+    distance:"218 km remaining"
+  },
 
-        lat:
-            11.1570,
+  "Kombolcha": {
+    lat:11.0810,
+    lng:39.7390,
+    en:"Kombolcha",
+    am:"ኮምቦልቻ",
+    distance:"200 km remaining"
+  },
 
-        lng:
-            42.7150
+  "Kemise": {
+    lat:10.7160,
+    lng:39.8690,
+    en:"Kemise",
+    am:"ከሚሴ",
+    distance:"150 km remaining"
+  },
 
-    },
+  "Shewa Robit": {
+    lat:10.0100,
+    lng:39.9000,
+    en:"Shewa Robit",
+    am:"ሸዋ ሮቢት",
+    distance:"60 km remaining"
+  },
 
-
-    "Semera / Logiya": {
-
-        amharic:
-            "ሰመራ / ሎጊያ",
-
-        distance:
-            "453 km remaining",
-
-        lat:
-            11.7940,
-
-        lng:
-            41.0040
-
-    },
-
-
-    "Mile": {
-
-        amharic:
-            "ሚሌ",
-
-        distance:
-            "366 km remaining",
-
-        lat:
-            11.4600,
-
-        lng:
-            40.9800
-
-    },
-
-
-    "Bati": {
-
-        amharic:
-            "ባቲ",
-
-        distance:
-            "218 km remaining",
-
-        lat:
-            11.1880,
-
-        lng:
-            40.0160
-
-    },
-
-
-    "Kombolcha": {
-
-        amharic:
-            "ኮምቦልቻ",
-
-        distance:
-            "200 km remaining",
-
-        lat:
-            11.0810,
-
-        lng:
-            39.7390
-
-    },
-
-
-    "Kemise": {
-
-        amharic:
-            "ከሚሴ",
-
-        distance:
-            "150 km remaining",
-
-        lat:
-            10.7160,
-
-        lng:
-            39.8690
-
-    },
-
-
-    "Shewa Robit": {
-
-        amharic:
-            "ሸዋ ሮቢት",
-
-        distance:
-            "60 km remaining",
-
-        lat:
-            10.0100,
-
-        lng:
-            39.9000
-
-    },
-
-
-    "Debre Birhan": {
-
-        amharic:
-            "ደብረ ብርሃን",
-
-        distance:
-            "0 km · arrived",
-
-        lat:
-            9.6800,
-
-        lng:
-            39.5300
-
-    }
-
+  "Debre Birhan": {
+    lat:9.6800,
+    lng:39.5300,
+    en:"Debre Birhan",
+    am:"ደብረ ብርሃን",
+    distance:"0 km · arrived"
+  }
 };
 
-
-/* =========================================================
-   VARIABLES
-========================================================= */
-
-let map = null;
-
-let markers = {};
-
-let routePolyline = null;
-
-let currentLocation =
-    "Galafi";
-
-
-/* =========================================================
+/* ================================
    ELEMENTS
-========================================================= */
+================================ */
 
 const locationSelect =
-    document.getElementById(
-        "location"
-    );
+  document.getElementById("location");
 
 const customerSelect =
-    document.getElementById(
-        "customer"
-    );
+  document.getElementById("customer");
 
 const containerInput =
-    document.getElementById(
-        "container"
-    );
+  document.getElementById("container_no");
 
 const billInput =
-    document.getElementById(
-        "billNo"
-    );
+  document.getElementById("bill_no");
 
 const remarkInput =
-    document.getElementById(
-        "remark"
-    );
-
-const statusElement =
-    document.getElementById(
-        "status"
-    );
-
-const distanceElement =
-    document.getElementById(
-        "distance"
-    );
+  document.getElementById("remark");
 
 const remarkDisplay =
-    document.getElementById(
-        "remarkDisplay"
+  document.getElementById("remarkDisplay");
+
+const statusEl =
+  document.getElementById("status");
+
+const saveMessage =
+  document.getElementById("saveMessage");
+
+const saveBtn =
+  document.getElementById("saveBtn");
+
+let map = null;
+let markers = [];
+let routeLine = null;
+
+/* ================================
+   UPDATE LOCATION ON SCREEN
+================================ */
+
+function updateLocation(location) {
+
+  const d = locations[location];
+
+  if (!d) return;
+
+  statusEl.textContent =
+    "🚚 Current Truck Location: " +
+    d.en +
+    " · " +
+    d.distance;
+
+  document.querySelectorAll(".stop").forEach(stop => {
+
+    stop.classList.toggle(
+      "current",
+      stop.dataset.location === location
     );
 
-const messageElement =
-    document.getElementById(
-        "message"
-    );
+  });
 
-const routeList =
-    document.getElementById(
-        "routeList"
-    );
+  if (map && locations[location]) {
 
+    map.panTo({
+      lat: locations[location].lat,
+      lng: locations[location].lng
+    });
 
-/* =========================================================
-   GOOGLE MAPS INITIALIZATION
-========================================================= */
-
-async function initMap() {
-
-    if (
-        !GOOGLE_MAPS_API_KEY ||
-        GOOGLE_MAPS_API_KEY ===
-        "AIzaSyDPQmjEWfvLoapdCjWjUBkRf_aufaxkW8M"
-    ) {
-
-        document.getElementById(
-            "map"
-        ).innerHTML = `
-
-            <div style="
-                height:100%;
-                display:flex;
-                align-items:center;
-                justify-content:center;
-                text-align:center;
-                padding:30px;
-                color:#64748b;
-                background:#f8fafc;
-            ">
-
-                <div>
-
-                    <div style="
-                        font-size:40px;
-                        margin-bottom:12px;
-                    ">
-                        🗺️
-                    </div>
-
-                    <strong>
-                        Google Maps API key required
-                    </strong>
-
-                    <br><br>
-
-                    Add your Google Maps API key
-                    in the index.html code.
-
-                </div>
-
-            </div>
-
-        `;
-
-        return;
-    }
-
-
-    try {
-
-        const {
-            Map
-        } = await google.maps.importLibrary(
-            "maps"
-        );
-
-
-        const center =
-            locations["Bati"];
-
-
-        map = new Map(
-            document.getElementById(
-                "map"
-            ),
-            {
-
-                center: {
-
-                    lat:
-                        center.lat,
-
-                    lng:
-                        center.lng
-
-                },
-
-                zoom: 7,
-
-                mapTypeControl:
-                    true,
-
-                streetViewControl:
-                    false,
-
-                fullscreenControl:
-                    true,
-
-                zoomControl:
-                    true
-
-            }
-        );
-
-
-        /* Draw route */
-
-        const routePath =
-            Object.values(
-                locations
-            ).map(
-                location => ({
-
-                    lat:
-                        location.lat,
-
-                    lng:
-                        location.lng
-
-                })
-            );
-
-
-        routePolyline =
-            new google.maps.Polyline({
-
-                path:
-                    routePath,
-
-                geodesic:
-                    true,
-
-                strokeColor:
-                    "#2563eb",
-
-                strokeOpacity:
-                    0.9,
-
-                strokeWeight:
-                    5,
-
-                map:
-                    map
-
-            });
-
-
-        /* Create markers */
-
-        Object.entries(
-            locations
-        ).forEach(
-            ([name, location]) => {
-
-                const marker =
-                    new google.maps.Marker({
-
-                        position: {
-
-                            lat:
-                                location.lat,
-
-                            lng:
-                                location.lng
-
-                        },
-
-                        map:
-                            map,
-
-                        title:
-                            name +
-                            " · " +
-                            location.amharic
-
-                    });
-
-
-                markers[name] =
-                    marker;
-
-
-                marker.addListener(
-                    "click",
-                    () => {
-
-                        locationSelect.value =
-                            name;
-
-                        updateLocation(
-                            name
-                        );
-
-                    }
-                );
-
-            }
-        );
-
-
-        updateLocation(
-            currentLocation
-        );
-
-
-    } catch (error) {
-
-        console.error(
-            "Google Maps error:",
-            error
-        );
-
-        document.getElementById(
-            "map"
-        ).innerHTML = `
-
-            <div style="
-                padding:30px;
-                text-align:center;
-                color:#dc2626;
-            ">
-
-                Google Maps could not load.
-
-                <br><br>
-
-                Check your API key,
-                Maps JavaScript API,
-                billing and restrictions.
-
-            </div>
-
-        `;
-
-    }
-
+  }
 }
 
-
-/* =========================================================
-   UPDATE MAP LOCATION
-========================================================= */
-
-function updateLocation(
-    location
-) {
-
-    currentLocation =
-        location;
-
-
-    const data =
-        locations[location];
-
-
-    if (!data) {
-        return;
-    }
-
-
-    /* Status */
-
-    statusElement.textContent =
-        "🚚 Arrived at " +
-        location +
-        " · " +
-        data.distance;
-
-
-    distanceElement.textContent =
-        data.distance;
-
-
-    /* Highlight route list */
-
-    document
-        .querySelectorAll(
-            ".route-item"
-        )
-        .forEach(
-            item => {
-
-                item.classList.toggle(
-                    "active",
-                    item.dataset.location ===
-                    location
-                );
-
-            }
-        );
-
-
-    /* Move map */
-
-    if (map) {
-
-        map.panTo({
-
-            lat:
-                data.lat,
-
-            lng:
-                data.lng
-
-        });
-
-    }
-
-
-    /* Update markers */
-
-    Object.entries(
-        markers
-    ).forEach(
-        ([name, marker]) => {
-
-            if (
-                name === location
-            ) {
-
-                marker.setIcon({
-
-                    path:
-                        google.maps.SymbolPath
-                        .CIRCLE,
-
-                    scale:
-                        12,
-
-                    fillColor:
-                        "#ef6f3f",
-
-                    fillOpacity:
-                        1,
-
-                    strokeColor:
-                        "#ffffff",
-
-                    strokeWeight:
-                        3
-
-                });
-
-                marker.setZIndex(
-                    100
-                );
-
-            } else {
-
-                marker.setIcon({
-
-                    path:
-                        google.maps.SymbolPath
-                        .CIRCLE,
-
-                    scale:
-                        8,
-
-                    fillColor:
-                        "#22a879",
-
-                    fillOpacity:
-                        1,
-
-                    strokeColor:
-                        "#ffffff",
-
-                    strokeWeight:
-                        2
-
-                });
-
-                marker.setZIndex(
-                    1
-                );
-
-            }
-
-        }
-    );
-
-}
-
-
-/* =========================================================
-   BUILD ROUTE LIST
-========================================================= */
-
-function buildRouteList() {
-
-    routeList.innerHTML = "";
-
-
-    Object.entries(
-        locations
-    ).forEach(
-        ([name, data]) => {
-
-            const item =
-                document.createElement(
-                    "div"
-                );
-
-
-            item.className =
-                "route-item";
-
-
-            item.dataset.location =
-                name;
-
-
-            item.innerHTML = `
-
-                <div class="route-name">
-                    ${name}
-                </div>
-
-                <div class="route-amharic">
-                    ${data.amharic}
-                </div>
-
-                <div class="route-distance">
-                    ${data.distance}
-                </div>
-
-            `;
-
-
-            item.addEventListener(
-                "click",
-                () => {
-
-                    locationSelect.value =
-                        name;
-
-                    updateLocation(
-                        name
-                    );
-
-                }
-            );
-
-
-            routeList.appendChild(
-                item
-            );
-
-        }
-    );
-
-}
-
-
-/* =========================================================
+locationSelect.addEventListener(
+  "change",
+  () => updateLocation(locationSelect.value)
+);
+
+/* ================================
    LOAD DATA FROM SUPABASE
-========================================================= */
+================================ */
 
 async function loadData() {
 
-    const {
-        data,
-        error
-    } = await supabaseClient
+  try {
 
-        .from(
-            "truck_status"
-        )
-
-        .select(
-            "location, customer, container_no, bill_no, remark, updated_at"
-        )
-
-        .eq(
-            "id",
-            1
-        )
-
-        .single();
-
-
-    if (error) {
-
-        console.error(
-            "Supabase load error:",
-            error
-        );
-
-        return;
-    }
-
-
-    if (!data) {
-        return;
-    }
-
-
-    /* =====================================================
-       LOCATION
-    ===================================================== */
-
-    if (
-        data.location &&
-        document.activeElement !==
-        locationSelect
-    ) {
-
-        locationSelect.value =
-            data.location;
-
-        updateLocation(
-            data.location
-        );
-
-    }
-
-
-    /* =====================================================
-       CUSTOMER
-    ===================================================== */
-
-    if (
-        data.customer &&
-        document.activeElement !==
-        customerSelect
-    ) {
-
-        customerSelect.value =
-            data.customer;
-
-    }
-
-
-    /* =====================================================
-       CONTAINER
-    ===================================================== */
-
-    if (
-        document.activeElement !==
-        containerInput
-    ) {
-
-        containerInput.value =
-            data.container_no || "";
-
-    }
-
-
-    /* =====================================================
-       BILL
-    ===================================================== */
-
-    if (
-        document.activeElement !==
-        billInput
-    ) {
-
-        billInput.value =
-            data.bill_no || "";
-
-    }
-
-
-    /* =====================================================
-       REMARK
-    ===================================================== */
-
-    if (
-        document.activeElement !==
-        remarkInput
-    ) {
-
-        remarkInput.value =
-            data.remark || "";
-
-
-        if (data.remark) {
-
-            remarkDisplay.textContent =
-                data.remark;
-
-        } else {
-
-            remarkDisplay.textContent =
-                "No remark available. · ምንም ማስታወሻ የለም።";
-
+    const response = await fetch(
+      SUPABASE_URL +
+      "/rest/v1/truck_status?id=eq.1&select=location,customer,container_no,bill_no,remark,updated_at",
+      {
+        headers:{
+          apikey:SUPABASE_KEY,
+          Authorization:"Bearer " + SUPABASE_KEY
         }
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error(
+        "Supabase read failed: " +
+        response.status
+      );
+    }
+
+    const rows = await response.json();
+
+    const data = rows[0];
+
+    if (!data) return;
+
+    /*
+      Important:
+      Do not overwrite a field while
+      the user is typing in it.
+    */
+
+    if (
+      data.location &&
+      document.activeElement !== locationSelect
+    ) {
+
+      locationSelect.value = data.location;
 
     }
+
+    if (
+      data.customer &&
+      document.activeElement !== customerSelect
+    ) {
+
+      customerSelect.value = data.customer;
+
+    }
+
+    if (
+      document.activeElement !== containerInput
+    ) {
+
+      containerInput.value =
+        data.container_no || "";
+
+    }
+
+    if (
+      document.activeElement !== billInput
+    ) {
+
+      billInput.value =
+        data.bill_no || "";
+
+    }
+
+    if (
+      document.activeElement !== remarkInput
+    ) {
+
+      remarkInput.value =
+        data.remark || "";
+
+      remarkDisplay.textContent =
+        data.remark ||
+        "No remark available.";
+
+    }
+
+    updateLocation(locationSelect.value);
+
+  }
+
+  catch(error) {
+
+    console.error(error);
+
+  }
 
 }
 
-
-/* =========================================================
+/* ================================
    SAVE UPDATE
-========================================================= */
+================================ */
 
 async function saveUpdate() {
 
-    const location =
-        locationSelect.value;
+  saveBtn.disabled = true;
+  saveBtn.textContent = "Saving...";
 
-    const customer =
-        customerSelect.value;
+  const location =
+    locationSelect.value;
 
-    const container =
-        containerInput.value.trim();
+  const customer =
+    customerSelect.value;
 
-    const billNo =
-        billInput.value.trim();
+  const container =
+    containerInput.value.trim();
 
-    const remark =
-        remarkInput.value.trim();
+  const billNo =
+    billInput.value.trim();
 
+  const remark =
+    remarkInput.value.trim();
 
-    messageElement.className =
-        "message";
+  try {
 
-    messageElement.textContent =
-        "";
+    const response = await fetch(
+      SUPABASE_URL +
+      "/rest/v1/truck_status?id=eq.1",
+      {
+        method:"PATCH",
 
+        headers:{
+          apikey:SUPABASE_KEY,
+          Authorization:"Bearer " + SUPABASE_KEY,
+          "Content-Type":"application/json",
+          Prefer:"return=minimal"
+        },
 
-    const {
-        error
-    } = await supabaseClient
+        body:JSON.stringify({
 
-        .from(
-            "truck_status"
-        )
+          location:location,
 
-        .update({
+          customer:customer,
 
-            location:
-                location,
+          container_no:
+            container || null,
 
-            customer:
-                customer,
+          bill_no:
+            billNo || null,
 
-            container_no:
-                container || null,
+          remark:
+            remark || null,
 
-            bill_no:
-                billNo || null,
-
-            remark:
-                remark || null,
-
-            updated_at:
-                new Date()
-                    .toISOString()
+          updated_at:
+            new Date().toISOString()
 
         })
-
-        .eq(
-            "id",
-            1
-        );
-
-
-    if (error) {
-
-        console.error(
-            "Save error:",
-            error
-        );
-
-
-        messageElement.className =
-            "message error";
-
-
-        messageElement.textContent =
-            "Update failed: " +
-            error.message;
-
-
-        return;
-    }
-
-
-    /* Update screen */
-
-    updateLocation(
-        location
+      }
     );
 
+    if (!response.ok) {
 
-    if (remark) {
+      const msg =
+        await response.text();
 
-        remarkDisplay.textContent =
-            remark;
-
-    } else {
-
-        remarkDisplay.textContent =
-            "No remark available. · ምንም ማስታወሻ የለም።";
+      throw new Error(
+        msg || "Update failed"
+      );
 
     }
 
+    remarkDisplay.textContent =
+      remark || "No remark available.";
 
-    messageElement.className =
-        "message success";
+    updateLocation(location);
 
+    saveMessage.className = "success";
 
-    messageElement.textContent =
-        "✓ Update saved successfully · መረጃው ተቀምጧል";
+    saveMessage.textContent =
+      "✓ Update saved successfully.";
 
+    setTimeout(() => {
+      saveMessage.textContent = "";
+    },2500);
 
-    setTimeout(
-        () => {
+  }
 
-            messageElement.className =
-                "message";
+  catch(error) {
 
-            messageElement.textContent =
-                "";
+    console.error(error);
 
-        },
-        3000
-    );
+    saveMessage.className = "error";
+
+    saveMessage.textContent =
+      "✕ Update failed. Check Supabase RLS/update policy.";
+
+  }
+
+  finally {
+
+    saveBtn.disabled = false;
+
+    saveBtn.textContent =
+      "Save Update";
+
+  }
 
 }
 
-
-/* =========================================================
-   LOCATION DROPDOWN
-========================================================= */
-
-locationSelect.addEventListener(
-    "change",
-    function() {
-
-        updateLocation(
-            this.value
-        );
-
-    }
+saveBtn.addEventListener(
+  "click",
+  saveUpdate
 );
 
+/* ================================
+   GOOGLE MAPS
+================================ */
 
-/* =========================================================
+function initMap() {
+
+  const points =
+    Object.values(locations).map(
+      x => ({
+        lat:x.lat,
+        lng:x.lng
+      })
+    );
+
+  map = new google.maps.Map(
+    document.getElementById("map"),
+    {
+      center:points[3],
+      zoom:6,
+      mapTypeControl:true,
+      streetViewControl:false,
+      fullscreenControl:true
+    }
+  );
+
+  markers =
+    Object.values(locations).map(
+      (p,i) =>
+        new google.maps.Marker({
+
+          position:{
+            lat:p.lat,
+            lng:p.lng
+          },
+
+          map:map,
+
+          title:
+            p.en +
+            " · " +
+            p.am,
+
+          label:
+            String(i + 1)
+
+        })
+    );
+
+  routeLine =
+    new google.maps.Polyline({
+
+      path:points,
+
+      geodesic:true,
+
+      strokeOpacity:.85,
+
+      strokeWeight:5,
+
+      map:map
+
+    });
+
+  updateLocation(
+    locationSelect.value
+  );
+}
+
+/* ================================
+   LOAD GOOGLE MAPS API
+================================ */
+
+function loadGoogleMaps() {
+
+  const script =
+    document.createElement("script");
+
+  script.async = true;
+
+  script.defer = true;
+
+  script.src =
+    "https://maps.googleapis.com/maps/api/js" +
+    "?key=" +
+    encodeURIComponent(
+      AIzaSyDPQmjEWfvLoapdCjWjUBkRf_aufaxkW8M
+    ) +
+    "&loading=async" +
+    "&callback=initMap";
+
+  script.onerror = function() {
+
+    document.getElementById("map").innerHTML =
+      "<div style='padding:25px;font-weight:700'>" +
+      "Google Maps could not load. " +
+      "Check that Maps JavaScript API is enabled " +
+      "and your API key is allowed for this website." +
+      "</div>";
+
+  };
+
+  document.head.appendChild(script);
+}
+
+/* ================================
    START
-========================================================= */
+================================ */
 
-buildRouteList();
+loadGoogleMaps();
 
 loadData();
 
-
-/* =========================================================
-   AUTO REFRESH
-========================================================= */
-
+/* Refresh every 5 seconds */
 setInterval(
-    loadData,
-    5000
+  loadData,
+  5000
 );
 
 </script>
 
-
-<!-- =======================================================
-     GOOGLE MAPS SCRIPT
-======================================================== -->
-
-<script
-    async
-    src="https://maps.googleapis.com/maps/api/js?AIzaSyDPQmjEWfvLoapdCjWjUBkRf_aufaxkW8M&loading=async&callback=initMap">
-</script>
-
-
 </body>
-
 </html>
