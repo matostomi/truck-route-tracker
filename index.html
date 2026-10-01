@@ -64,6 +64,22 @@ body{
   font-size:25px;
   font-weight:800;
 }
+.estimate-input{
+  display:block;
+  width:100%;
+  border:0;
+  padding:0;
+  background:transparent;
+  color:var(--text);
+  font-family:inherit;
+  font-size:25px;
+  font-weight:800;
+  outline:none;
+}
+.estimate-input:focus{
+  box-shadow:none;
+  border:0;
+}
 .metric-label{
   margin-top:5px;
   font-size:13px;
@@ -238,12 +254,12 @@ textarea{
   .page{padding:12px}
   .main{grid-template-columns:1fr}
   .route-card{min-height:auto}
-  .map{height:430px}
+  .route-visual{height:430px}
 }
 @media(max-width:500px){
   .metrics{grid-template-columns:1fr}
   .header h1{font-size:22px}
-  .map{height:360px}
+  .route-visual{height:360px}
 }
 </style>
 </head>
@@ -262,7 +278,7 @@ textarea{
       <div class="metric-label">Total Route</div>
     </div>
     <div class="metric">
-      <div class="metric-value">2 → 3 Day</div>
+      <input id="estimate_arrive" class="metric-value estimate-input" value="2 → 3 Day" aria-label="Estimate arrive">
       <div class="metric-label">Estimate arrive</div>
     </div>
   </div>
@@ -338,8 +354,55 @@ textarea{
         <div class="lang">🇬🇧 English · 🇪🇹 Amharic</div>
       </div>
 
-      <div class="map">
-        <div id="map"></div>
+      <div class="route-visual" aria-label="Truck route diagram">
+        <svg viewBox="0 0 900 560" role="img" aria-label="Galafi to Debre Birhan truck route">
+          <rect class="route-bg" x="0" y="0" width="900" height="560"/>
+          <path class="route-shadow" d="M92 450 C145 418 178 365 245 332 C305 302 344 288 380 255 C430 210 475 193 535 160 C585 133 615 128 660 108 C710 86 754 65 815 38"/>
+          <path class="route-line" d="M92 450 C145 418 178 365 245 332 C305 302 344 288 380 255 C430 210 475 193 535 160 C585 133 615 128 660 108 C710 86 754 65 815 38"/>
+
+          <g data-svg-location="Galafi">
+            <circle class="route-node-halo" cx="92" cy="450" r="22"/>
+            <circle class="route-node" cx="92" cy="450" r="10"/>
+            <text class="route-label" x="92" y="486" text-anchor="middle">Galafi</text>
+            <text class="route-label am" x="92" y="503" text-anchor="middle">ጋላፊ</text>
+          </g>
+          <g data-svg-location="Semera / Logiya">
+            <circle class="route-node" cx="245" cy="332" r="10"/>
+            <text class="route-label" x="245" y="310" text-anchor="middle">Semera / Logiya</text>
+            <text class="route-label am" x="245" y="326" text-anchor="middle">ሰመራ / ሎጊያ</text>
+          </g>
+          <g data-svg-location="Mile">
+            <circle class="route-node" cx="380" cy="255" r="10"/>
+            <text class="route-label" x="380" y="231" text-anchor="middle">Mile</text>
+            <text class="route-label am" x="380" y="247" text-anchor="middle">ሚሌ</text>
+          </g>
+          <g data-svg-location="Bati">
+            <circle class="route-node" cx="535" cy="160" r="10"/>
+            <text class="route-label" x="535" y="136" text-anchor="middle">Bati</text>
+            <text class="route-label am" x="535" y="152" text-anchor="middle">ባቲ</text>
+          </g>
+          <g data-svg-location="Kombolcha">
+            <circle class="route-node" cx="660" cy="108" r="10"/>
+            <text class="route-label" x="660" y="84" text-anchor="middle">Kombolcha</text>
+            <text class="route-label am" x="660" y="100" text-anchor="middle">ኮምቦልቻ</text>
+          </g>
+          <g data-svg-location="Kemise">
+            <circle class="route-node" cx="615" cy="128" r="10"/>
+            <text class="route-label" x="615" y="151" text-anchor="middle">Kemise</text>
+            <text class="route-label am" x="615" y="167" text-anchor="middle">ከሚሴ</text>
+          </g>
+          <g data-svg-location="Shewa Robit">
+            <circle class="route-node" cx="710" cy="86" r="10"/>
+            <text class="route-label" x="710" y="63" text-anchor="middle">Shewa Robit</text>
+            <text class="route-label am" x="710" y="79" text-anchor="middle">ሸዋ ሮቢት</text>
+          </g>
+          <g data-svg-location="Debre Birhan">
+            <circle class="route-node" cx="815" cy="38" r="10"/>
+            <text class="route-label" x="815" y="20" text-anchor="middle">Debre Birhan</text>
+            <text class="route-label am" x="815" y="36" text-anchor="middle">ደብረ ብርሃን</text>
+          </g>
+        </svg>
+        <div class="map-note">Route diagram · live status from Supabase</div>
       </div>
 
       <div class="route-strip">
@@ -360,9 +423,6 @@ textarea{
 <script>
 const SUPABASE_URL = "https://nqngncyvtvsptlyqizpg.supabase.co";
 const SUPABASE_KEY = "sb_publishable_tUa87rjEkzu1OTM3Fd_X4w_ayDg6RW9";
-
-/* Google Maps API key */
-const GOOGLE_MAPS_API_KEY = "AIzaSyDPQmjEWfvLoapdCjWjUBkRf_aufaxkW8M";
 
 const locations = {
   "Galafi": {
@@ -417,10 +477,7 @@ const statusLocation = document.getElementById("statusLocation");
 const statusDistance = document.getElementById("statusDistance");
 const saveBtn = document.getElementById("saveBtn");
 const saveMessage = document.getElementById("saveMessage");
-
-let map = null;
-let markers = [];
-let routeLine = null;
+const estimateArriveInput = document.getElementById("estimate_arrive");
 
 function updateLocation(location){
   const d = locations[location];
@@ -433,9 +490,22 @@ function updateLocation(location){
     el.classList.toggle("current", el.dataset.location === location);
   });
 
-  if(map){
-    map.panTo({lat:d.lat,lng:d.lng});
-  }
+  document.querySelectorAll("[data-svg-location]").forEach(group=>{
+    const isCurrent = group.dataset.svgLocation === location;
+    const node = group.querySelector(".route-node");
+    const halo = group.querySelector(".route-node-halo");
+    if(node) node.classList.toggle("current", isCurrent);
+    if(isCurrent && !halo){
+      const circle = node.cloneNode(false);
+      circle.setAttribute("class", "route-node-halo");
+      circle.setAttribute("r", "22");
+      circle.setAttribute("stroke", "none");
+      circle.setAttribute("fill", "rgba(37,99,235,.13)");
+      group.insertBefore(circle, node);
+    } else if(!isCurrent && halo){
+      halo.remove();
+    }
+  });
 }
 
 locationSelect.addEventListener("change",()=>{
@@ -446,7 +516,7 @@ async function loadData(){
   try{
     const response = await fetch(
       SUPABASE_URL +
-      "/rest/v1/truck_status?id=eq.1&select=location,customer,container_no,bill_no,remark,updated_at",
+      "/rest/v1/truck_status?id=eq.1&select=location,customer,container_no,bill_no,remark,estimate_arrive,updated_at",
       {
         headers:{
           apikey:SUPABASE_KEY,
@@ -477,6 +547,10 @@ async function loadData(){
       billInput.value = data.bill_no || "";
     }
 
+    if(document.activeElement !== estimateArriveInput){
+      estimateArriveInput.value = data.estimate_arrive || "2 → 3 Day";
+    }
+
     if(document.activeElement !== remarkInput){
       remarkInput.value = data.remark || "";
       remarkDisplay.textContent = data.remark || "No remark available.";
@@ -497,6 +571,7 @@ async function saveUpdate(){
   const container = containerInput.value.trim();
   const billNo = billInput.value.trim();
   const remark = remarkInput.value.trim();
+  const estimateArrive = estimateArriveInput.value.trim();
 
   try{
     const response = await fetch(
@@ -515,6 +590,7 @@ async function saveUpdate(){
           container_no:container || null,
           bill_no:billNo || null,
           remark:remark || null,
+          estimate_arrive:estimateArrive || null,
           updated_at:new Date().toISOString()
         })
       }
@@ -548,66 +624,7 @@ async function saveUpdate(){
 
 saveBtn.addEventListener("click",saveUpdate);
 
-function initMap(){
 
-  const points = Object.values(locations).map(p=>({
-    lat:p.lat,
-    lng:p.lng
-  }));
-
-  map = new google.maps.Map(
-    document.getElementById("map"),
-    {
-      center:{lat:10.95,lng:40.45},
-      zoom:7,
-      mapTypeControl:true,
-      streetViewControl:false,
-      fullscreenControl:true
-    }
-  );
-
-  markers = Object.entries(locations).map(([name,p])=>{
-    return new google.maps.Marker({
-      position:{lat:p.lat,lng:p.lng},
-      map:map,
-      title:name + " · " + p.am
-    });
-  });
-
-  routeLine = new google.maps.Polyline({
-    path:points,
-    geodesic:true,
-    strokeOpacity:.9,
-    strokeWeight:5,
-    map:map
-  });
-
-  updateLocation(locationSelect.value);
-}
-
-function loadGoogleMaps(){
-  const script = document.createElement("script");
-
-  script.async = true;
-  script.defer = true;
-
-  script.src =
-    "https://maps.googleapis.com/maps/api/js" +
-    "?key=" + encodeURIComponent(GOOGLE_MAPS_API_KEY) +
-    "&loading=async&callback=initMap";
-
-  script.onerror = ()=>{
-    document.getElementById("map").innerHTML =
-      "<div style='padding:25px;font-weight:700'>" +
-      "Google Maps could not load. Please check your API key, " +
-      "billing, Maps JavaScript API, and website restriction." +
-      "</div>";
-  };
-
-  document.head.appendChild(script);
-}
-
-loadGoogleMaps();
 loadData();
 setInterval(loadData,5000);
 </script>
