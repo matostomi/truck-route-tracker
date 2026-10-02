@@ -255,7 +255,7 @@ textarea{
   fill:white;
   stroke:#2563eb;
   stroke-width:2;
-  transition:all 0.3s ease;
+  transition:fill 0.2s ease, stroke 0.2s ease;
 }
 
 .route-node.current{
@@ -264,15 +264,10 @@ textarea{
   stroke-width:2;
 }
 
-.route-node.current.arrived{
-  fill:var(--green-bright);
-  stroke:var(--green-deep);
-  animation:greenBlink 1s ease-in-out infinite;
-}
-
 .route-node-halo{
   fill:rgba(37,99,235,.13);
   stroke:none;
+  transition:fill 0.2s ease;
 }
 
 .route-label{
@@ -331,10 +326,6 @@ textarea{
 @keyframes pulse{
   0%,100%{box-shadow:0 0 0 0 rgba(37,99,235,.12)}
   50%{box-shadow:0 0 0 5px rgba(37,99,235,.05)}
-}
-@keyframes greenBlink{
-  0%,100%{opacity:1; transform:scale(1)}
-  50%{opacity:.6; transform:scale(1.15)}
 }
 @keyframes greenPulse{
   0%,100%{box-shadow:0 0 0 0 rgba(34,197,94,.18)}
@@ -577,6 +568,8 @@ const saveBtn = document.getElementById("saveBtn");
 const saveMessage = document.getElementById("saveMessage");
 const estimateArriveInput = document.getElementById("estimate_arrive");
 
+let blinkInterval;
+
 function updateLocation(location){
   const d = locations[location];
   if(!d) return;
@@ -599,7 +592,7 @@ function updateLocation(location){
 
     if(node){
       node.classList.toggle("current", isCurrent);
-      node.classList.toggle("arrived", isArrived && isCurrent);
+      node.dataset.arrived = isArrived && isCurrent ? "true" : "";
     }
 
     if(distanceLabel){
@@ -618,6 +611,39 @@ function updateLocation(location){
       halo.remove();
     }
   });
+
+  // Start/stop green blink animation
+  if(isArrived){
+    startGreenBlink();
+  } else {
+    stopGreenBlink();
+  }
+}
+
+function startGreenBlink(){
+  if(blinkInterval) clearInterval(blinkInterval);
+  
+  const node = document.querySelector("[data-svg-location='Debre Birhan'] .route-node");
+  if(!node) return;
+
+  let state = true;
+  blinkInterval = setInterval(()=>{
+    if(state){
+      node.setAttribute("fill", "#22c55e");
+      node.setAttribute("stroke", "#15803d");
+    } else {
+      node.setAttribute("fill", "#16a34a");
+      node.setAttribute("stroke", "#15803d");
+    }
+    state = !state;
+  }, 500);
+}
+
+function stopGreenBlink(){
+  if(blinkInterval){
+    clearInterval(blinkInterval);
+    blinkInterval = null;
+  }
 }
 
 locationSelect.addEventListener("change",()=>{
