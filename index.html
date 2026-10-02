@@ -255,7 +255,7 @@ textarea{
   fill:white;
   stroke:#2563eb;
   stroke-width:2;
-  transition:fill 0.2s ease, stroke 0.2s ease;
+  transition:fill 0.2s ease, stroke 0.2s ease, transform 0.2s ease;
 }
 
 .route-node.current{
@@ -264,10 +264,19 @@ textarea{
   stroke-width:2;
 }
 
+.route-node.arrived{
+  fill:var(--green-bright);
+  stroke:var(--green-deep);
+}
+
 .route-node-halo{
   fill:rgba(37,99,235,.13);
   stroke:none;
   transition:fill 0.2s ease;
+}
+
+.route-node-halo.arrived{
+  fill:rgba(34,197,94,.18);
 }
 
 .route-label{
@@ -366,7 +375,6 @@ textarea{
 
   <div class="main">
 
-    <!-- MODERN SHIPMENT CARD -->
     <div class="card">
       <div class="card-head">
         <h2>Shipment Information</h2>
@@ -428,7 +436,6 @@ textarea{
       </div>
     </div>
 
-    <!-- MODERN MAP CARD -->
     <div class="card route-card">
       <div class="route-head">
         <h2>Truck Route</h2>
@@ -514,46 +521,14 @@ const SUPABASE_URL = "https://nqngncyvtvsptlyqizpg.supabase.co";
 const SUPABASE_KEY = "sb_publishable_tUa87rjEkzu1OTM3Fd_X4w_ayDg6RW9";
 
 const locations = {
-  "Galafi": {
-    lat:11.1570,lng:42.7150,
-    distance:"567 km remaining",
-    am:"ጋላፊ"
-  },
-  "Semera / Logiya": {
-    lat:11.7940,lng:41.0040,
-    distance:"453 km remaining",
-    am:"ሰመራ / ሎጊያ"
-  },
-  "Mile": {
-    lat:11.4600,lng:40.9800,
-    distance:"366 km remaining",
-    am:"ሚሌ"
-  },
-  "Bati": {
-    lat:11.1880,lng:40.0160,
-    distance:"218 km remaining",
-    am:"ባቲ"
-  },
-  "Kombolcha": {
-    lat:11.0810,lng:39.7390,
-    distance:"200 km remaining",
-    am:"ኮምቦልቻ"
-  },
-  "Kemise": {
-    lat:10.7160,lng:39.8690,
-    distance:"150 km remaining",
-    am:"ከሚሴ"
-  },
-  "Shewa Robit": {
-    lat:10.0100,lng:39.9000,
-    distance:"60 km remaining",
-    am:"ሸዋ ሮቢት"
-  },
-  "Debre Birhan": {
-    lat:9.6800,lng:39.5300,
-    distance:"0 km · arrived",
-    am:"ደብረ ብርሃን"
-  }
+  "Galafi": { distance:"567 km remaining" },
+  "Semera / Logiya": { distance:"453 km remaining" },
+  "Mile": { distance:"366 km remaining" },
+  "Bati": { distance:"218 km remaining" },
+  "Kombolcha": { distance:"200 km remaining" },
+  "Kemise": { distance:"150 km remaining" },
+  "Shewa Robit": { distance:"60 km remaining" },
+  "Debre Birhan": { distance:"0 km · arrived" }
 };
 
 const locationSelect = document.getElementById("location");
@@ -568,7 +543,27 @@ const saveBtn = document.getElementById("saveBtn");
 const saveMessage = document.getElementById("saveMessage");
 const estimateArriveInput = document.getElementById("estimate_arrive");
 
-let blinkInterval;
+let blinkInterval = null;
+
+function stopGreenBlink(){
+  if(blinkInterval){
+    clearInterval(blinkInterval);
+    blinkInterval = null;
+  }
+}
+
+function startGreenBlink(){
+  const node = document.querySelector("[data-svg-location='Debre Birhan'] .route-node");
+  if(!node) return;
+
+  stopGreenBlink();
+  let on = true;
+  blinkInterval = setInterval(()=>{
+    node.setAttribute("fill", on ? "#22c55e" : "#16a34a");
+    node.setAttribute("stroke", on ? "#15803d" : "#166534");
+    on = !on;
+  }, 500);
+}
 
 function updateLocation(location){
   const d = locations[location];
@@ -578,13 +573,13 @@ function updateLocation(location){
   statusLocation.textContent = isArrived ? "✅ Arrived at " + location : "🚚 Arrived at " + location;
   statusDistance.textContent = d.distance;
 
-  document.querySelectorAll(".route-stop").forEach(el=>{
+  document.querySelectorAll(".route-stop").forEach(el => {
     const isCurrent = el.dataset.location === location;
     el.classList.toggle("current", isCurrent);
-    el.classList.toggle("arrived", isArrived && isCurrent);
+    el.classList.toggle("arrived", isCurrent && isArrived);
   });
 
-  document.querySelectorAll("[data-svg-location]").forEach(group=>{
+  document.querySelectorAll("[data-svg-location]").forEach(group => {
     const isCurrent = group.dataset.svgLocation === location;
     const node = group.querySelector(".route-node");
     const halo = group.querySelector(".route-node-halo");
@@ -592,17 +587,24 @@ function updateLocation(location){
 
     if(node){
       node.classList.toggle("current", isCurrent);
-      node.dataset.arrived = isArrived && isCurrent ? "true" : "";
+      node.classList.toggle("arrived", isCurrent && isArrived);
+      if(isCurrent && isArrived){
+        node.setAttribute("fill", "#22c55e");
+        node.setAttribute("stroke", "#15803d");
+      } else if(isCurrent) {
+        node.setAttribute("fill", "#2563eb");
+        node.setAttribute("stroke", "#174ea6");
+      }
     }
 
     if(distanceLabel){
       distanceLabel.classList.toggle("current", isCurrent);
-      distanceLabel.classList.toggle("arrived", isArrived && isCurrent);
+      distanceLabel.classList.toggle("arrived", isCurrent && isArrived);
     }
 
     if(isCurrent && !halo){
       const circle = node.cloneNode(false);
-      circle.setAttribute("class", "route-node-halo");
+      circle.setAttribute("class", "route-node-halo" + (isArrived ? " arrived" : ""));
       circle.setAttribute("r", "22");
       circle.setAttribute("stroke", "none");
       circle.setAttribute("fill", isArrived ? "rgba(34,197,94,.18)" : "rgba(37,99,235,.13)");
@@ -612,7 +614,6 @@ function updateLocation(location){
     }
   });
 
-  // Start/stop green blink animation
   if(isArrived){
     startGreenBlink();
   } else {
@@ -620,33 +621,7 @@ function updateLocation(location){
   }
 }
 
-function startGreenBlink(){
-  if(blinkInterval) clearInterval(blinkInterval);
-  
-  const node = document.querySelector("[data-svg-location='Debre Birhan'] .route-node");
-  if(!node) return;
-
-  let state = true;
-  blinkInterval = setInterval(()=>{
-    if(state){
-      node.setAttribute("fill", "#22c55e");
-      node.setAttribute("stroke", "#15803d");
-    } else {
-      node.setAttribute("fill", "#16a34a");
-      node.setAttribute("stroke", "#15803d");
-    }
-    state = !state;
-  }, 500);
-}
-
-function stopGreenBlink(){
-  if(blinkInterval){
-    clearInterval(blinkInterval);
-    blinkInterval = null;
-  }
-}
-
-locationSelect.addEventListener("change",()=>{
+locationSelect.addEventListener("change", () => {
   updateLocation(locationSelect.value);
 });
 
@@ -685,13 +660,13 @@ async function loadData(){
       billInput.value = data.bill_no || "";
     }
 
-    if(document.activeElement !== estimateArriveInput){
-      estimateArriveInput.value = data.estimate_arrive || "2 → 3 Day";
-    }
-
     if(document.activeElement !== remarkInput){
       remarkInput.value = data.remark || "";
       remarkDisplay.textContent = data.remark || "No remark available.";
+    }
+
+    if(document.activeElement !== estimateArriveInput){
+      estimateArriveInput.value = data.estimate_arrive || "2 → 3 Day";
     }
 
     updateLocation(locationSelect.value);
@@ -745,26 +720,25 @@ async function saveUpdate(){
     saveMessage.className = "message success";
     saveMessage.textContent = "✓ Update saved successfully.";
 
-    setTimeout(()=>{
+    setTimeout(() => {
       saveMessage.textContent = "";
-    },2500);
+    }, 2500);
 
   }catch(error){
     console.error(error);
     saveMessage.className = "message error";
-    saveMessage.textContent =
-      "✕ Update failed. Check Supabase RLS/update policy.";
+    saveMessage.textContent = "✕ Update failed. Check Supabase RLS/update policy.";
   }finally{
     saveBtn.disabled = false;
     saveBtn.textContent = "SAVE UPDATE";
   }
 }
 
-saveBtn.addEventListener("click",saveUpdate);
+saveBtn.addEventListener("click", saveUpdate);
 
 updateLocation(locationSelect.value);
 loadData();
-setInterval(loadData,5000);
+setInterval(loadData, 5000);
 </script>
 </body>
 </html>
