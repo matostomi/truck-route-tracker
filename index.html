@@ -16,6 +16,8 @@
   --blue2:#dbeafe;
   --green:#087443;
   --orange:#b54708;
+  --green-bright:#22c55e;
+  --green-deep:#15803d;
 }
 *{box-sizing:border-box}
 body{
@@ -262,6 +264,12 @@ textarea{
   stroke-width:2;
 }
 
+.route-node.current.arrived{
+  fill:var(--green-bright);
+  stroke:var(--green-deep);
+  animation:greenBlink 1s ease-in-out infinite;
+}
+
 .route-node-halo{
   fill:rgba(37,99,235,.13);
   stroke:none;
@@ -276,6 +284,22 @@ textarea{
 .route-label.am{
   font-size:11px;
   fill:#667085;
+}
+
+.route-distance-label{
+  font-size:11px;
+  font-weight:700;
+  fill:#475467;
+  letter-spacing:.2px;
+}
+
+.route-distance-label.current{
+  fill:#1d4ed8;
+}
+
+.route-distance-label.arrived{
+  fill:#15803d;
+  font-weight:800;
 }
 
 .route-strip{
@@ -298,9 +322,23 @@ textarea{
   color:#174ea6;
   animation:pulse 1.2s infinite;
 }
+.route-stop.current.arrived{
+  border-color:var(--green-deep);
+  background:#dcfce7;
+  color:var(--green-deep);
+  animation:greenPulse 1s ease-in-out infinite;
+}
 @keyframes pulse{
   0%,100%{box-shadow:0 0 0 0 rgba(37,99,235,.12)}
   50%{box-shadow:0 0 0 5px rgba(37,99,235,.05)}
+}
+@keyframes greenBlink{
+  0%,100%{opacity:1; transform:scale(1)}
+  50%{opacity:.6; transform:scale(1.15)}
+}
+@keyframes greenPulse{
+  0%,100%{box-shadow:0 0 0 0 rgba(34,197,94,.18)}
+  50%{box-shadow:0 0 0 5px rgba(34,197,94,.08)}
 }
 @media(max-width:850px){
   .page{padding:12px}
@@ -417,41 +455,49 @@ textarea{
             <circle class="route-node" cx="92" cy="450" r="10"/>
             <text class="route-label" x="92" y="486" text-anchor="middle">Galafi</text>
             <text class="route-label am" x="92" y="503" text-anchor="middle">ጋላፊ</text>
+            <text class="route-distance-label" x="92" y="430" text-anchor="middle">567 km</text>
           </g>
           <g data-svg-location="Semera / Logiya">
             <circle class="route-node" cx="245" cy="332" r="10"/>
             <text class="route-label" x="245" y="310" text-anchor="middle">Semera / Logiya</text>
             <text class="route-label am" x="245" y="326" text-anchor="middle">ሰመራ / ሎጊያ</text>
+            <text class="route-distance-label" x="245" y="360" text-anchor="middle">453 km</text>
           </g>
           <g data-svg-location="Mile">
             <circle class="route-node" cx="380" cy="255" r="10"/>
             <text class="route-label" x="380" y="231" text-anchor="middle">Mile</text>
             <text class="route-label am" x="380" y="247" text-anchor="middle">ሚሌ</text>
+            <text class="route-distance-label" x="380" y="284" text-anchor="middle">366 km</text>
           </g>
           <g data-svg-location="Bati">
             <circle class="route-node" cx="535" cy="160" r="10"/>
             <text class="route-label" x="535" y="136" text-anchor="middle">Bati</text>
             <text class="route-label am" x="535" y="152" text-anchor="middle">ባቲ</text>
+            <text class="route-distance-label" x="535" y="182" text-anchor="middle">218 km</text>
           </g>
           <g data-svg-location="Kombolcha">
             <circle class="route-node" cx="660" cy="108" r="10"/>
             <text class="route-label" x="660" y="84" text-anchor="middle">Kombolcha</text>
             <text class="route-label am" x="660" y="100" text-anchor="middle">ኮምቦልቻ</text>
+            <text class="route-distance-label" x="660" y="128" text-anchor="middle">200 km</text>
           </g>
           <g data-svg-location="Kemise">
             <circle class="route-node" cx="615" cy="128" r="10"/>
             <text class="route-label" x="615" y="151" text-anchor="middle">Kemise</text>
             <text class="route-label am" x="615" y="167" text-anchor="middle">ከሚሴ</text>
+            <text class="route-distance-label" x="615" y="109" text-anchor="middle">150 km</text>
           </g>
           <g data-svg-location="Shewa Robit">
             <circle class="route-node" cx="710" cy="86" r="10"/>
             <text class="route-label" x="710" y="63" text-anchor="middle">Shewa Robit</text>
             <text class="route-label am" x="710" y="79" text-anchor="middle">ሸዋ ሮቢት</text>
+            <text class="route-distance-label" x="710" y="104" text-anchor="middle">60 km</text>
           </g>
           <g data-svg-location="Debre Birhan">
             <circle class="route-node" cx="815" cy="38" r="10"/>
             <text class="route-label" x="815" y="20" text-anchor="middle">Debre Birhan</text>
             <text class="route-label am" x="815" y="36" text-anchor="middle">ደብረ ብርሃን</text>
+            <text class="route-distance-label" x="815" y="58" text-anchor="middle">0 km</text>
           </g>
         </svg>
         <div class="map-note">Route diagram · </div>
@@ -535,24 +581,38 @@ function updateLocation(location){
   const d = locations[location];
   if(!d) return;
 
-  statusLocation.textContent = "🚚 Arrived at " + location;
+  const isArrived = location === "Debre Birhan";
+  statusLocation.textContent = isArrived ? "✅ Arrived at " + location : "🚚 Arrived at " + location;
   statusDistance.textContent = d.distance;
 
   document.querySelectorAll(".route-stop").forEach(el=>{
-    el.classList.toggle("current", el.dataset.location === location);
+    const isCurrent = el.dataset.location === location;
+    el.classList.toggle("current", isCurrent);
+    el.classList.toggle("arrived", isArrived && isCurrent);
   });
 
   document.querySelectorAll("[data-svg-location]").forEach(group=>{
     const isCurrent = group.dataset.svgLocation === location;
     const node = group.querySelector(".route-node");
     const halo = group.querySelector(".route-node-halo");
-    if(node) node.classList.toggle("current", isCurrent);
+    const distanceLabel = group.querySelector(".route-distance-label");
+
+    if(node){
+      node.classList.toggle("current", isCurrent);
+      node.classList.toggle("arrived", isArrived && isCurrent);
+    }
+
+    if(distanceLabel){
+      distanceLabel.classList.toggle("current", isCurrent);
+      distanceLabel.classList.toggle("arrived", isArrived && isCurrent);
+    }
+
     if(isCurrent && !halo){
       const circle = node.cloneNode(false);
       circle.setAttribute("class", "route-node-halo");
       circle.setAttribute("r", "22");
       circle.setAttribute("stroke", "none");
-      circle.setAttribute("fill", "rgba(37,99,235,.13)");
+      circle.setAttribute("fill", isArrived ? "rgba(34,197,94,.18)" : "rgba(37,99,235,.13)");
       group.insertBefore(circle, node);
     } else if(!isCurrent && halo){
       halo.remove();
