@@ -255,7 +255,7 @@ textarea{
   fill:white;
   stroke:#2563eb;
   stroke-width:2;
-  transition:fill 0.2s ease, stroke 0.2s ease, transform 0.2s ease;
+  transition:fill 0.2s ease, stroke 0.2s ease;
 }
 
 .route-node.current{
@@ -264,19 +264,13 @@ textarea{
   stroke-width:2;
 }
 
-.route-node.arrived{
-  fill:var(--green-bright);
-  stroke:var(--green-deep);
+.route-node.current.blinking {
+  animation: greenBlink 0.6s ease-in-out infinite;
 }
 
 .route-node-halo{
   fill:rgba(37,99,235,.13);
   stroke:none;
-  transition:fill 0.2s ease;
-}
-
-.route-node-halo.arrived{
-  fill:rgba(34,197,94,.18);
 }
 
 .route-label{
@@ -301,11 +295,6 @@ textarea{
   fill:#1d4ed8;
 }
 
-.route-distance-label.arrived{
-  fill:#15803d;
-  font-weight:800;
-}
-
 .route-strip{
   display:flex;
   flex-wrap:wrap;
@@ -326,20 +315,34 @@ textarea{
   color:#174ea6;
   animation:pulse 1.2s infinite;
 }
-.route-stop.current.arrived{
+.route-stop.current.blinking{
   border-color:var(--green-deep);
   background:#dcfce7;
   color:var(--green-deep);
-  animation:greenPulse 1s ease-in-out infinite;
+  animation:greenPulse 0.6s ease-in-out infinite;
 }
+
 @keyframes pulse{
   0%,100%{box-shadow:0 0 0 0 rgba(37,99,235,.12)}
   50%{box-shadow:0 0 0 5px rgba(37,99,235,.05)}
 }
+
+@keyframes greenBlink{
+  0%, 100%{
+    fill:#22c55e;
+    stroke:#15803d;
+  }
+  50%{
+    fill:#16a34a;
+    stroke:#166534;
+  }
+}
+
 @keyframes greenPulse{
   0%,100%{box-shadow:0 0 0 0 rgba(34,197,94,.18)}
   50%{box-shadow:0 0 0 5px rgba(34,197,94,.08)}
 }
+
 @media(max-width:850px){
   .page{padding:12px}
   .main{grid-template-columns:1fr}
@@ -543,42 +546,21 @@ const saveBtn = document.getElementById("saveBtn");
 const saveMessage = document.getElementById("saveMessage");
 const estimateArriveInput = document.getElementById("estimate_arrive");
 
-let blinkInterval = null;
-
-function stopGreenBlink(){
-  if(blinkInterval){
-    clearInterval(blinkInterval);
-    blinkInterval = null;
-  }
-}
-
-function startGreenBlink(){
-  const node = document.querySelector("[data-svg-location='Debre Birhan'] .route-node");
-  if(!node) return;
-
-  stopGreenBlink();
-  let on = true;
-  blinkInterval = setInterval(()=>{
-    node.setAttribute("fill", on ? "#22c55e" : "#16a34a");
-    node.setAttribute("stroke", on ? "#15803d" : "#166534");
-    on = !on;
-  }, 500);
-}
-
 function updateLocation(location){
   const d = locations[location];
   if(!d) return;
 
-  const isArrived = location === "Debre Birhan";
-  statusLocation.textContent = isArrived ? "✅ Arrived at " + location : "🚚 Arrived at " + location;
+  statusLocation.textContent = "🚚 Arrived at " + location;
   statusDistance.textContent = d.distance;
 
+  // Update route stops with blinking animation
   document.querySelectorAll(".route-stop").forEach(el => {
     const isCurrent = el.dataset.location === location;
     el.classList.toggle("current", isCurrent);
-    el.classList.toggle("arrived", isCurrent && isArrived);
+    el.classList.toggle("blinking", isCurrent);
   });
 
+  // Update SVG nodes with blinking animation
   document.querySelectorAll("[data-svg-location]").forEach(group => {
     const isCurrent = group.dataset.svgLocation === location;
     const node = group.querySelector(".route-node");
@@ -587,38 +569,24 @@ function updateLocation(location){
 
     if(node){
       node.classList.toggle("current", isCurrent);
-      node.classList.toggle("arrived", isCurrent && isArrived);
-      if(isCurrent && isArrived){
-        node.setAttribute("fill", "#22c55e");
-        node.setAttribute("stroke", "#15803d");
-      } else if(isCurrent) {
-        node.setAttribute("fill", "#2563eb");
-        node.setAttribute("stroke", "#174ea6");
-      }
+      node.classList.toggle("blinking", isCurrent);
     }
 
     if(distanceLabel){
       distanceLabel.classList.toggle("current", isCurrent);
-      distanceLabel.classList.toggle("arrived", isCurrent && isArrived);
     }
 
     if(isCurrent && !halo){
       const circle = node.cloneNode(false);
-      circle.setAttribute("class", "route-node-halo" + (isArrived ? " arrived" : ""));
+      circle.setAttribute("class", "route-node-halo");
       circle.setAttribute("r", "22");
       circle.setAttribute("stroke", "none");
-      circle.setAttribute("fill", isArrived ? "rgba(34,197,94,.18)" : "rgba(37,99,235,.13)");
+      circle.setAttribute("fill", "rgba(37,99,235,.13)");
       group.insertBefore(circle, node);
     } else if(!isCurrent && halo){
       halo.remove();
     }
   });
-
-  if(isArrived){
-    startGreenBlink();
-  } else {
-    stopGreenBlink();
-  }
 }
 
 locationSelect.addEventListener("change", () => {
